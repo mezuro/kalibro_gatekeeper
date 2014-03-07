@@ -18,9 +18,6 @@ gem 'coffee-rails', '~> 4.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer', :platforms => :ruby
 
-# Use Modernizr for better browser compability
-gem 'modernizr-rails'
-
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 
@@ -50,17 +47,6 @@ group :development, :test do
 
   # Fixtures made easy
   gem 'factory_girl_rails', '~> 4.4.1'
-
-  # JavaScript unit tests
-  gem "konacha", "~> 3.2.0"
-end
-
-# Acceptance tests
-group :cucumber do
-  gem 'cucumber', '~> 1.3.10'
-  gem 'cucumber-rails'
-  gem 'database_cleaner'
-  gem 'poltergeist', '~> 1.5.0'
 end
 
 # Use ActiveModel has_secure_password
