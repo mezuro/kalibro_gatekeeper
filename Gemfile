@@ -30,6 +30,9 @@ gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', require: false
 
+# KalibroService
+gem 'kalibro_gem', '~> 0.0.2.rc1'
+
 # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
 gem 'spring', group: :development
 
