@@ -3,7 +3,7 @@
 
 # TEAM
 
-    Rafael Reggiani Manzo - Base app maintaneir - rr.manzo at gmail.com
+    Rafael Reggiani Manzo - rr.manzo at gmail.com
 
 # THANKSs
 
@@ -12,11 +12,5 @@
     Ruby On Rails 4
       RSpec
       FactoryGirl
-      Capybara
-      Cucumber
       ShouldaMatchers
       Simplecov
-
-    HTML5, CSS3
-
-    Normalize.css, jQuery, Modernizr
