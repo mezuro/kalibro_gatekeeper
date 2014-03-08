@@ -26,4 +26,24 @@ describe BaseToolsController do
       end
     end
   end
+
+  describe 'get' do
+    let!(:base_tool) { FactoryGirl.build(:base_tool) }
+
+    before :each do
+      KalibroGem::Entities::BaseTool.expects(:find_by_name).with(base_tool.name).returns(base_tool)
+    end
+
+    context 'json format' do
+      before :each do
+        post :get, name: base_tool.name, format: :json
+      end
+
+      it { should respond_with(:success) }
+
+      it 'returns the list of names' do
+        JSON.parse(response.body).should eq(JSON.parse(base_tool.to_hash.to_json))
+      end
+    end
+  end
 end
