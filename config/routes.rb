@@ -65,6 +65,10 @@ Rails.application.routes.draw do
   post 'reading_groups/get' => 'reading_groups#get'
   post 'reading_groups/destroy' => 'reading_groups#destroy'
 
+  #Repositories
+  post 'repositories/save' => 'repositories#save'
+  post 'repositories/destroy' => 'repositories#destroy'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
