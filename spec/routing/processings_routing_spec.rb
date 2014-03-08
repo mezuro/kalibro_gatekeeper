@@ -8,5 +8,7 @@ describe ProcessingsController do
                   to(controller: :processings, action: :has_ready) }
     it { should route(:post, 'processings/has_after').
                   to(controller: :processings, action: :has_after) }
+    it { should route(:post, 'processings/has_before').
+                  to(controller: :processings, action: :has_before) }
   end
 end

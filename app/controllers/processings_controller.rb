@@ -22,4 +22,12 @@ class ProcessingsController < ApplicationController
       format.json { render json: exists }
     end
   end
+
+  def has_before
+    exists = {exists: KalibroGem::Entities::Processing.has_processing_before(params[:repository_id], params[:date])}
+
+    respond_to do |format|
+      format.json { render json: exists }
+    end
+  end
 end
