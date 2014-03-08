@@ -13,7 +13,6 @@ Rails.application.routes.draw do
   post 'configurations/destroy' => 'configurations#destroy'
 
   #MetricConfigurations
-  post 'metric_configurations/exists' => 'metric_configurations#exists'
   post 'metric_configurations/save' => 'metric_configurations#save'
   post 'metric_configurations/get' => 'metric_configurations#get'
   post 'metric_configurations/destroy' => 'metric_configurations#destroy'
@@ -47,6 +46,11 @@ Rails.application.routes.draw do
   post 'projects/save' => 'projects#save'
   post 'projects/get' => 'projects#get'
   post 'projects/destroy' => 'projects#destroy'
+
+  #Ranges
+  post 'ranges/save' => 'ranges#save'
+  post 'ranges/destroy' => 'ranges#destroy'
+  post 'ranges/of' => 'ranges#of'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
