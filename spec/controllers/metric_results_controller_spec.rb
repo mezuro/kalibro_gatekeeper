@@ -17,7 +17,7 @@ describe MetricResultsController do
 
       it { should respond_with(:success) }
 
-      it 'returns the list of names' do
+      it 'returns the list of date_metric_results' do
         JSON.parse(response.body).should eq(JSON.parse({date_metric_results: date_metric_results.map { |date_metric_result| date_metric_result.to_hash }}.to_json))
       end
     end
@@ -25,6 +25,7 @@ describe MetricResultsController do
 
   describe 'descendant_results_of' do
     let!(:metric_result) { FactoryGirl.build(:metric_result) }
+
     before :each do
       KalibroGem::Entities::MetricResult.expects(:descendant_results).with(metric_result.id).returns([metric_result.value])
     end
@@ -36,8 +37,29 @@ describe MetricResultsController do
 
       it { should respond_with(:success) }
 
-      it 'returns the list of names' do
+      it 'returns the list of values' do
         JSON.parse(response.body).should eq(JSON.parse({descendant_results: [metric_result.value]}.to_json))
+      end
+    end
+  end
+
+  describe 'of' do
+    let!(:module_result) { FactoryGirl.build(:module_result) }
+    let!(:metric_result) { FactoryGirl.build(:metric_result) }
+
+    before :each do
+      KalibroGem::Entities::MetricResult.expects(:metric_results_of).with(module_result.id).returns([metric_result.to_hash])
+    end
+
+    context 'json format' do
+      before :each do
+        post :of, module_result_id: module_result.id, format: :json
+      end
+
+      it { should respond_with(:success) }
+
+      it 'returns the list of names' do
+        JSON.parse(response.body).should eq(JSON.parse({metric_results: [metric_result.to_hash]}.to_json))
       end
     end
   end

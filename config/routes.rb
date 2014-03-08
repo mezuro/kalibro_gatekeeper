@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   #MetricResults
   post 'metric_results/history_of_metric' => 'metric_results#history_of_metric'
   post 'metric_results/descendant_results_of' => 'metric_results#descendant_results_of'
+  post 'metric_results/of' => 'metric_results#of'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
