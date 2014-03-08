@@ -6,4 +6,12 @@ class MetricResultsController < ApplicationController
       format.json { render json: history_of_metric }
     end
   end
+
+  def descendant_results_of
+    descendant_results = {descendant_results: KalibroGem::Entities::MetricResult.descendant_results(params[:id])}
+
+    respond_to do |format|
+      format.json { render json: descendant_results }
+    end
+  end
 end

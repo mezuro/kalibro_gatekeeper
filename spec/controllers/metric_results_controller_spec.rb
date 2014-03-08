@@ -22,4 +22,23 @@ describe MetricResultsController do
       end
     end
   end
+
+  describe 'descendant_results_of' do
+    let!(:metric_result) { FactoryGirl.build(:metric_result) }
+    before :each do
+      KalibroGem::Entities::MetricResult.expects(:descendant_results).with(metric_result.id).returns([metric_result.value])
+    end
+
+    context 'json format' do
+      before :each do
+        post :descendant_results_of, id: metric_result.id, format: :json
+      end
+
+      it { should respond_with(:success) }
+
+      it 'returns the list of names' do
+        JSON.parse(response.body).should eq(JSON.parse({descendant_results: [metric_result.value]}.to_json))
+      end
+    end
+  end
 end
