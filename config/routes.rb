@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   #Configurations
   post 'configurations/exists' => 'configurations#exists'
+  get 'configurations/all' => 'configurations#all'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
