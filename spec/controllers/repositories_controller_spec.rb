@@ -115,7 +115,7 @@ describe RepositoriesController do
       context 'json format' do
         before :each do
           repository.expects(:process).returns(true)
-          get :process_repository, id: repository.id, format: :json
+          post :process_repository, id: repository.id, format: :json
         end
 
         it { should respond_with(:success) }
@@ -130,7 +130,6 @@ describe RepositoriesController do
   describe 'cancel_process' do
     let(:repository) { FactoryGirl.build(:repository) }
 
-
     context 'with and existent repository' do
       before :each do
         KalibroGem::Entities::Repository.expects(:find).with(repository.id).returns(repository)
@@ -139,7 +138,7 @@ describe RepositoriesController do
       context 'json format' do
         before :each do
           repository.expects(:cancel_process).returns(true)
-          get :cancel_process, id: repository.id, format: :json
+          post :cancel_process, id: repository.id, format: :json
         end
 
         it { should respond_with(:success) }
@@ -148,6 +147,20 @@ describe RepositoriesController do
           JSON.parse(response.body).should eq(JSON.parse({canceled_processing_for: repository.id}.to_json))
         end
       end
+    end
+  end
+
+  describe 'supported_types' do
+    before :each do
+      KalibroGem::Entities::Repository.expects(:repository_types).returns(['GIT'])
+
+      get :supported_types, format: :json
+    end
+
+    it { should respond_with(:success) }
+
+    it 'returns confirmation' do
+      JSON.parse(response.body).should eq(JSON.parse({supported_types: ["GIT"]}.to_json))
     end
   end
 end

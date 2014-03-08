@@ -51,4 +51,12 @@ class RepositoriesController < ApplicationController
       format.json { render json: {canceled_processing_for: params[:id]} }
     end
   end
+
+  def supported_types
+    types = {supported_types: KalibroGem::Entities::Repository.repository_types}
+
+    respond_to do |format|
+      format.json { render json: types }
+    end
+  end
 end
