@@ -41,6 +41,13 @@ Rails.application.routes.draw do
   post 'processings/first_after_of' => 'processings#first_after_of'
   post 'processings/last_before_of' => 'processings#last_before_of'
 
+  #Projects
+  post 'projects/exists' => 'projects#exists'
+  get 'projects/all' => 'projects#all'
+  post 'projects/save' => 'projects#save'
+  post 'projects/get' => 'projects#get'
+  post 'projects/destroy' => 'projects#destroy'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
