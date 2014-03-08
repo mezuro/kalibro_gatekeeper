@@ -46,4 +46,44 @@ describe ConfigurationsController do
       end
     end
   end
+
+  describe 'save' do
+    let(:configuration) { FactoryGirl.build(:configuration, id: nil) }
+
+    context 'successfully saved' do
+      before :each do
+        KalibroGem::Entities::Configuration.any_instance.expects(:save).returns(true)
+      end
+
+      context 'json format' do
+        before :each do
+          post :save, configuration: configuration.to_hash, format: :json
+        end
+
+        it { should respond_with(:success) }
+
+        it 'returns the configuration' do
+          JSON.parse(response.body).should eq(JSON.parse(configuration.to_hash.to_json))
+        end
+      end
+    end
+
+    context 'failed to save' do
+      before :each do
+        KalibroGem::Entities::Configuration.any_instance.expects(:save).returns(false)
+      end
+
+      context 'json format' do
+        before :each do
+          post :save, configuration: configuration.to_hash, format: :json
+        end
+
+        it { should respond_with(:unprocessable_entity) }
+
+        it 'returns configuration' do
+          JSON.parse(response.body).should eq(JSON.parse(configuration.to_hash.to_json))
+        end
+      end
+    end
+  end
 end

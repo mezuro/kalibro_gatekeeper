@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   #Configurations
   post 'configurations/exists' => 'configurations#exists'
   get 'configurations/all' => 'configurations#all'
+  post 'configurations/save' => 'configurations#save'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

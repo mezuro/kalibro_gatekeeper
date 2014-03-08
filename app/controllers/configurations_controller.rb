@@ -15,4 +15,16 @@ class ConfigurationsController < ApplicationController
       format.json { render json: configurations }
     end
   end
+
+  def save
+    configuration = KalibroGem::Entities::Configuration.new(params[:configuration])
+
+    respond_to do |format|
+      if configuration.save
+        format.json { render json: configuration }
+      else
+        format.json { render json: configuration, status: :unprocessable_entity }
+      end
+    end
+  end
 end
