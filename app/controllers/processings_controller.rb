@@ -46,4 +46,20 @@ class ProcessingsController < ApplicationController
       format.json { render json: processing }
     end
   end
+
+  def last_of
+    processing = {processing: KalibroGem::Entities::Processing.last_processing_of(params[:repository_id]).to_hash}
+
+    respond_to do |format|
+      format.json { render json: processing }
+    end
+  end
+
+  def first_of
+    processing = {processing: KalibroGem::Entities::Processing.first_processing_of(params[:repository_id]).to_hash}
+
+    respond_to do |format|
+      format.json { render json: processing }
+    end
+  end
 end

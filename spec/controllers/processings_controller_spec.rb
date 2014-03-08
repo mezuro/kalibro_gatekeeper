@@ -123,4 +123,46 @@ describe ProcessingsController do
       end
     end
   end
+
+  describe 'last_of' do
+    let!(:processing) { FactoryGirl.build(:processing) }
+    let!(:repository) { FactoryGirl.build(:repository) }
+
+    before :each do
+      KalibroGem::Entities::Processing.expects(:last_processing_of).with(repository.id).returns(processing)
+    end
+
+    context 'json format' do
+      before :each do
+        post :last_of, repository_id: repository.id, format: :json
+      end
+
+      it { should respond_with(:success) }
+
+      it 'returns the list of date_metric_results' do
+        JSON.parse(response.body).should eq(JSON.parse({processing: processing.to_hash}.to_json))
+      end
+    end
+  end
+
+  describe 'first_of' do
+    let!(:processing) { FactoryGirl.build(:processing) }
+    let!(:repository) { FactoryGirl.build(:repository) }
+
+    before :each do
+      KalibroGem::Entities::Processing.expects(:first_processing_of).with(repository.id).returns(processing)
+    end
+
+    context 'json format' do
+      before :each do
+        post :first_of, repository_id: repository.id, format: :json
+      end
+
+      it { should respond_with(:success) }
+
+      it 'returns the list of date_metric_results' do
+        JSON.parse(response.body).should eq(JSON.parse({processing: processing.to_hash}.to_json))
+      end
+    end
+  end
 end
