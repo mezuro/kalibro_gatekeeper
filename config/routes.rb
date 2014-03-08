@@ -24,6 +24,9 @@ Rails.application.routes.draw do
   post 'metric_results/descendant_results_of' => 'metric_results#descendant_results_of'
   post 'metric_results/of' => 'metric_results#of'
 
+  #ModuleResults
+  post 'module_results/get' => 'module_results#get'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
