@@ -30,4 +30,12 @@ class ProcessingsController < ApplicationController
       format.json { render json: exists }
     end
   end
+
+  def last_state_of
+    state = {state: KalibroGem::Entities::Processing.last_processing_state_of(params[:repository_id])}
+
+    respond_to do |format|
+      format.json { render json: state }
+    end
+  end
 end

@@ -82,4 +82,24 @@ describe ProcessingsController do
       end
     end
   end
+
+  describe 'last_state_of' do
+    let!(:repository) { FactoryGirl.build(:repository) }
+
+    before :each do
+      KalibroGem::Entities::Processing.expects(:last_processing_state_of).with(repository.id).returns("READY")
+    end
+
+    context 'json format' do
+      before :each do
+        post :last_state_of, repository_id: repository.id, format: :json
+      end
+
+      it { should respond_with(:success) }
+
+      it 'returns the list of date_metric_results' do
+        JSON.parse(response.body).should eq(JSON.parse({state: "READY"}.to_json))
+      end
+    end
+  end
 end

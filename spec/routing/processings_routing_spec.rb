@@ -10,5 +10,7 @@ describe ProcessingsController do
                   to(controller: :processings, action: :has_after) }
     it { should route(:post, 'processings/has_before').
                   to(controller: :processings, action: :has_before) }
+    it { should route(:post, 'processings/last_state_of').
+                  to(controller: :processings, action: :last_state_of) }
   end
 end
