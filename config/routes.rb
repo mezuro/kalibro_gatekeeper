@@ -58,6 +58,13 @@ Rails.application.routes.draw do
   post 'readings/destroy' => 'readings#destroy'
   post 'readings/of' => 'readings#of'
 
+  #ReadingGroups
+  post 'reading_groups/exists' => 'reading_groups#exists'
+  get 'reading_groups/all' => 'reading_groups#all'
+  post 'reading_groups/save' => 'reading_groups#save'
+  post 'reading_groups/get' => 'reading_groups#get'
+  post 'reading_groups/destroy' => 'reading_groups#destroy'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
