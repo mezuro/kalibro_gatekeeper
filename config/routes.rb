@@ -5,6 +5,9 @@ Rails.application.routes.draw do
   get 'base_tools/all_names' => 'base_tools#all_names'
   post 'base_tools/get' => 'base_tools#get'
 
+  #Configurations
+  post 'configurations/exists' => 'configurations#exists'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
