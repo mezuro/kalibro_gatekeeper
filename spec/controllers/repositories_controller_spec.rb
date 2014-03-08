@@ -44,7 +44,6 @@ describe RepositoriesController do
   describe 'destroy' do
     let(:repository) { FactoryGirl.build(:repository) }
 
-
     context 'with and existent repository' do
       before :each do
         KalibroGem::Entities::Repository.expects(:find).with(repository.id).returns(repository)
@@ -52,7 +51,7 @@ describe RepositoriesController do
 
       context 'json format' do
         before :each do
-          repository.expects(:detroy).returns(true)
+          repository.expects(:destroy).returns(true)
           post :destroy, id: repository.id, format: :json
         end
 
@@ -100,6 +99,54 @@ describe RepositoriesController do
 
       it 'returns the list of names' do
         JSON.parse(response.body).should eq(JSON.parse({repositories: repositories.map { |c| c.to_hash }}.to_json))
+      end
+    end
+  end
+
+  describe 'process' do
+    let(:repository) { FactoryGirl.build(:repository) }
+
+
+    context 'with and existent repository' do
+      before :each do
+        KalibroGem::Entities::Repository.expects(:find).with(repository.id).returns(repository)
+      end
+
+      context 'json format' do
+        before :each do
+          repository.expects(:process).returns(true)
+          get :process_repository, id: repository.id, format: :json
+        end
+
+        it { should respond_with(:success) }
+
+        it 'returns confirmation' do
+          JSON.parse(response.body).should eq(JSON.parse({processing: repository.id}.to_json))
+        end
+      end
+    end
+  end
+
+  describe 'cancel_process' do
+    let(:repository) { FactoryGirl.build(:repository) }
+
+
+    context 'with and existent repository' do
+      before :each do
+        KalibroGem::Entities::Repository.expects(:find).with(repository.id).returns(repository)
+      end
+
+      context 'json format' do
+        before :each do
+          repository.expects(:cancel_process).returns(true)
+          get :cancel_process, id: repository.id, format: :json
+        end
+
+        it { should respond_with(:success) }
+
+        it 'returns confirmation' do
+          JSON.parse(response.body).should eq(JSON.parse({canceled_processing_for: repository.id}.to_json))
+        end
       end
     end
   end

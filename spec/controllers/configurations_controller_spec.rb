@@ -139,7 +139,7 @@ describe ConfigurationsController do
 
       context 'json format' do
         before :each do
-          configuration.expects(:detroy).returns(true)
+          configuration.expects(:destroy).returns(true)
           post :destroy, id: configuration.id, format: :json
         end
 

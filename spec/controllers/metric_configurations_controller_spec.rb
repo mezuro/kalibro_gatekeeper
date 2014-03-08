@@ -95,7 +95,7 @@ describe MetricConfigurationsController do
 
       context 'json format' do
         before :each do
-          metric_configuration.expects(:detroy).returns(true)
+          metric_configuration.expects(:destroy).returns(true)
           post :destroy, id: metric_configuration.id, format: :json
         end
 

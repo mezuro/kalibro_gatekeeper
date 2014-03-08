@@ -55,7 +55,7 @@ describe RangesController do
 
       context 'json format' do
         before :each do
-          range.expects(:detroy).returns(true)
+          range.expects(:destroy).returns(true)
           post :destroy, id: range.id, format: :json
         end
 

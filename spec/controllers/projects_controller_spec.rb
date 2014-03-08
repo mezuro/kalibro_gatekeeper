@@ -139,7 +139,7 @@ describe ProjectsController do
 
       context 'json format' do
         before :each do
-          project.expects(:detroy).returns(true)
+          project.expects(:destroy).returns(true)
           post :destroy, id: project.id, format: :json
         end
 

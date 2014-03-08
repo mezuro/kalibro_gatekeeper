@@ -139,7 +139,7 @@ describe ReadingGroupsController do
 
       context 'json format' do
         before :each do
-          reading_group.expects(:detroy).returns(true)
+          reading_group.expects(:destroy).returns(true)
           post :destroy, id: reading_group.id, format: :json
         end
 

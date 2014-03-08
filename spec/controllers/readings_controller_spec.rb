@@ -94,7 +94,7 @@ describe ReadingsController do
 
       context 'json format' do
         before :each do
-          reading.expects(:detroy).returns(true)
+          reading.expects(:destroy).returns(true)
           post :destroy, id: reading.id, format: :json
         end
 

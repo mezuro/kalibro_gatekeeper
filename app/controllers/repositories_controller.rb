@@ -35,4 +35,20 @@ class RepositoriesController < ApplicationController
       format.json { render json: repositories }
     end
   end
+
+  def process_repository
+    KalibroGem::Entities::Repository.find(params[:id]).process
+
+    respond_to do |format|
+      format.json { render json: {processing: params[:id]} }
+    end
+  end
+
+  def cancel_process
+    KalibroGem::Entities::Repository.find(params[:id]).cancel_process
+
+    respond_to do |format|
+      format.json { render json: {canceled_processing_for: params[:id]} }
+    end
+  end
 end
