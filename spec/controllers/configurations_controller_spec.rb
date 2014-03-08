@@ -127,4 +127,46 @@ describe ConfigurationsController do
       end
     end
   end
+
+  describe 'destroy' do
+    let(:configuration) { FactoryGirl.build(:configuration) }
+
+
+    context 'with and existent configuration' do
+      before :each do
+        KalibroGem::Entities::Configuration.expects(:find).with(configuration.id).returns(configuration)
+      end
+
+      context 'json format' do
+        before :each do
+          configuration.expects(:detroy).returns(true)
+          post :destroy, id: configuration.id, format: :json
+        end
+
+        it { should respond_with(:success) }
+
+        it 'returns configuration' do
+          JSON.parse(response.body).should eq(JSON.parse(configuration.to_hash.to_json))
+        end
+      end
+    end
+
+    context 'with and inexistent configuration' do
+      before :each do
+        KalibroGem::Entities::Configuration.expects(:find).with(configuration.id).raises(KalibroGem::Errors::RecordNotFound)
+      end
+
+      context 'json format' do
+        before :each do
+          post :destroy, id: configuration.id, format: :json
+        end
+
+        it { should respond_with(:unprocessable_entity) }
+
+        it 'returns configuration' do
+          JSON.parse(response.body).should eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+        end
+      end
+    end
+  end
 end

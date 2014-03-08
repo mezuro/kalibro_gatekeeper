@@ -43,4 +43,21 @@ class ConfigurationsController < ApplicationController
       end
     end
   end
+
+  def destroy
+    begin
+      configuration = KalibroGem::Entities::Configuration.find(params[:id])
+      configuration.destroy
+    rescue KalibroGem::Errors::RecordNotFound
+      configuration = {error: 'RecordNotFound'}
+    end
+
+    respond_to do |format|
+      if configuration.is_a?(KalibroGem::Entities::Configuration)
+        format.json { render json: configuration.to_hash }
+      else
+        format.json { render json: configuration, status: :unprocessable_entity }
+      end
+    end
+  end
 end
