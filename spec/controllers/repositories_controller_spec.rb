@@ -82,4 +82,25 @@ describe RepositoriesController do
       end
     end
   end
+
+  describe 'of' do
+    let!(:project) {FactoryGirl.build(:project)}
+    let!(:repositories) { [FactoryGirl.build(:repository)] }
+
+    before :each do
+      KalibroGem::Entities::Repository.expects(:repositories_of).returns(repositories)
+    end
+
+    context 'json format' do
+      before :each do
+        get :of, project_id: project.id, format: :json
+      end
+
+      it { should respond_with(:success) }
+
+      it 'returns the list of names' do
+        JSON.parse(response.body).should eq(JSON.parse({repositories: repositories.map { |c| c.to_hash }}.to_json))
+      end
+    end
+  end
 end

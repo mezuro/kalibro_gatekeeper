@@ -27,4 +27,12 @@ class RepositoriesController < ApplicationController
       end
     end
   end
+
+  def of
+    repositories = {repositories: KalibroGem::Entities::Repository.repositories_of(params[:project_id]).map { |repository| repository.to_hash }}
+
+    respond_to do |format|
+      format.json { render json: repositories }
+    end
+  end
 end

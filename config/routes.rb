@@ -68,6 +68,7 @@ Rails.application.routes.draw do
   #Repositories
   post 'repositories/save' => 'repositories#save'
   post 'repositories/destroy' => 'repositories#destroy'
+  post 'repositories/of' => 'repositories#of'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
