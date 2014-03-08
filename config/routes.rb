@@ -32,6 +32,7 @@ Rails.application.routes.draw do
   #Processings
   post 'processings/has' => 'processings#has'
   post 'processings/has_ready' => 'processings#has_ready'
+  post 'processings/has_after' => 'processings#has_after'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
