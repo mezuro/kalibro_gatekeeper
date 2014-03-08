@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   root 'information#data'
 
+  #BaseTools
+  get 'base_tools/all_names' => 'base_tools#all_names'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

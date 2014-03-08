@@ -50,6 +50,8 @@ group :development, :test do
 
   # Fixtures made easy
   gem 'factory_girl_rails', '~> 4.4.1'
+
+  gem 'mocha', '~> 1.0.0'
 end
 
 # Use ActiveModel has_secure_password
