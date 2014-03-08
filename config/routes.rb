@@ -19,6 +19,9 @@ Rails.application.routes.draw do
   post 'metric_configurations/destroy' => 'metric_configurations#destroy'
   post 'metric_configurations/of' => 'metric_configurations#of'
 
+  #MetricResults
+  post 'metric_results/history_of_metric' => 'metric_results#history_of_metric'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

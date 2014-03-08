@@ -1,0 +1,9 @@
+class MetricResultsController < ApplicationController
+  def history_of_metric
+    history_of_metric = {date_metric_results: KalibroGem::Entities::MetricResult.history_of(params[:metric_name], params[:module_result_id]).map { |date_metric_result| date_metric_result.to_hash }}
+
+    respond_to do |format|
+      format.json { render json: history_of_metric }
+    end
+  end
+end
