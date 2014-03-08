@@ -19,7 +19,7 @@ describe ConfigurationsController do
     end
   end
 
-  describe 'exists' do
+  describe 'all' do
     let!(:configurations) { [FactoryGirl.build(:configuration), FactoryGirl.build(:another_configuration)] }
 
     before :each do
