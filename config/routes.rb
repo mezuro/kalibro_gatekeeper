@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   #ModuleResults
   post 'module_results/get' => 'module_results#get'
   post 'module_results/children_of' => 'module_results#children_of'
+  post 'module_results/history_of' => 'module_results#history_of'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

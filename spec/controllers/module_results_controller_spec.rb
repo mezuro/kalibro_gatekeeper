@@ -83,4 +83,25 @@ describe ModuleResultsController do
       end
     end
   end
+
+  describe 'history_of' do
+    let!(:module_result) { FactoryGirl.build(:module_result) }
+    let!(:date_module_results) { [FactoryGirl.build(:date_module_result)] }
+
+    before :each do
+      KalibroGem::Entities::ModuleResult.expects(:history_of).with(module_result.id).returns(date_module_results)
+    end
+
+    context 'json format' do
+      before :each do
+        post :history_of, id: module_result.id, format: :json
+      end
+
+      it { should respond_with(:success) }
+
+      it 'returns the list of date_metric_results' do
+        JSON.parse(response.body).should eq(JSON.parse({date_module_results: date_module_results.map { |date_module_result| date_module_result.to_hash }}.to_json))
+      end
+    end
+  end
 end
