@@ -125,4 +125,25 @@ describe MetricConfigurationsController do
       end
     end
   end
+
+  describe 'of' do
+    let!(:configuration) {FactoryGirl.build(:configuration)}
+    let!(:metric_configurations) { [FactoryGirl.build(:metric_configuration)] }
+
+    before :each do
+      KalibroGem::Entities::MetricConfiguration.expects(:metric_configurations_of).returns(metric_configurations)
+    end
+
+    context 'json format' do
+      before :each do
+        get :of, configuration_id: configuration.id, format: :json
+      end
+
+      it { should respond_with(:success) }
+
+      it 'returns the list of names' do
+        JSON.parse(response.body).should eq(JSON.parse({metric_configurations: metric_configurations.map { |c| c.to_hash }}.to_json))
+      end
+    end
+  end
 end

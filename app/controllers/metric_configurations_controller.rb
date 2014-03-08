@@ -43,4 +43,12 @@ class MetricConfigurationsController < ApplicationController
       end
     end
   end
+
+  def of
+    metric_configurations = {metric_configurations: KalibroGem::Entities::MetricConfiguration.metric_configurations_of(params[:configuration_id]).map { |metric_configuration| metric_configuration.to_hash }}
+
+    respond_to do |format|
+      format.json { render json: metric_configurations }
+    end
+  end
 end

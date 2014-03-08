@@ -8,5 +8,7 @@ describe MetricConfigurationsController do
                   to(controller: :metric_configurations, action: :get) }
     it { should route(:post, 'metric_configurations/destroy').
                   to(controller: :metric_configurations, action: :destroy) }
+    it { should route(:post, 'metric_configurations/of').
+                  to(controller: :metric_configurations, action: :of) }
   end
 end

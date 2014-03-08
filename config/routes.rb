@@ -14,10 +14,10 @@ Rails.application.routes.draw do
 
   #MetricConfigurations
   post 'metric_configurations/exists' => 'metric_configurations#exists'
-  get 'metric_configurations/all' => 'metric_configurations#all'
   post 'metric_configurations/save' => 'metric_configurations#save'
   post 'metric_configurations/get' => 'metric_configurations#get'
   post 'metric_configurations/destroy' => 'metric_configurations#destroy'
+  post 'metric_configurations/of' => 'metric_configurations#of'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
