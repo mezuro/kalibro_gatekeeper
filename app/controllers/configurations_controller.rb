@@ -21,7 +21,23 @@ class ConfigurationsController < ApplicationController
 
     respond_to do |format|
       if configuration.save
-        format.json { render json: configuration }
+        format.json { render json: configuration.to_hash }
+      else
+        format.json { render json: configuration.to_hash, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def get
+    begin
+      configuration = KalibroGem::Entities::Configuration.find(params[:id])
+    rescue KalibroGem::Errors::RecordNotFound
+      configuration = {error: 'RecordNotFound'}
+    end
+
+    respond_to do |format|
+      if configuration.is_a?(KalibroGem::Entities::Configuration)
+        format.json { render json: configuration.to_hash }
       else
         format.json { render json: configuration, status: :unprocessable_entity }
       end

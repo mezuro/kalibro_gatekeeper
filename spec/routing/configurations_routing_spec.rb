@@ -8,5 +8,7 @@ describe ConfigurationsController do
                   to(controller: :configurations, action: :all) }
     it { should route(:post, 'configurations/save').
                   to(controller: :configurations, action: :save) }
+    it { should route(:post, 'configurations/get').
+                  to(controller: :configurations, action: :get) }
   end
 end
