@@ -165,4 +165,48 @@ describe ProcessingsController do
       end
     end
   end
+
+  describe 'first_after_of' do
+    let!(:processing) { FactoryGirl.build(:processing) }
+    let!(:repository) { FactoryGirl.build(:repository) }
+    let!(:date) {"21/12/1995"} # Ruby's first publication
+
+    before :each do
+      KalibroGem::Entities::Processing.expects(:first_processing_after).with(repository.id, date).returns(processing)
+    end
+
+    context 'json format' do
+      before :each do
+        post :first_after_of, repository_id: repository.id, date: date, format: :json
+      end
+
+      it { should respond_with(:success) }
+
+      it 'returns the list of date_metric_results' do
+        JSON.parse(response.body).should eq(JSON.parse({processing: processing.to_hash}.to_json))
+      end
+    end
+  end
+
+  describe 'last_before_of' do
+    let!(:processing) { FactoryGirl.build(:processing) }
+    let!(:repository) { FactoryGirl.build(:repository) }
+    let!(:date) {"21/12/1995"} # Ruby's first publication
+
+    before :each do
+      KalibroGem::Entities::Processing.expects(:last_processing_before).with(repository.id, date).returns(processing)
+    end
+
+    context 'json format' do
+      before :each do
+        post :last_before_of, repository_id: repository.id, date: date, format: :json
+      end
+
+      it { should respond_with(:success) }
+
+      it 'returns the list of date_metric_results' do
+        JSON.parse(response.body).should eq(JSON.parse({processing: processing.to_hash}.to_json))
+      end
+    end
+  end
 end

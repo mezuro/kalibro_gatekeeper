@@ -18,5 +18,9 @@ describe ProcessingsController do
                   to(controller: :processings, action: :last_of) }
     it { should route(:post, 'processings/first_of').
                   to(controller: :processings, action: :first_of) }
+    it { should route(:post, 'processings/first_after_of').
+                  to(controller: :processings, action: :first_after_of) }
+    it { should route(:post, 'processings/last_before_of').
+                  to(controller: :processings, action: :last_before_of) }
   end
 end
