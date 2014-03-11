@@ -1,6 +1,7 @@
 class MetricConfigurationsController < ApplicationController
   def save
     metric_configuration = KalibroGem::Entities::MetricConfiguration.new(params[:metric_configuration])
+    metric_configuration.configuration_id = params[:configuration_id]
 
     respond_to do |format|
       if metric_configuration.save
