@@ -29,7 +29,7 @@ class RangesController < ApplicationController
   end
 
   def of
-    ranges = {ranges: KalibroGem::Entities::Range.ranges_of(params[:reading_id]).map { |range| range.to_hash }}
+    ranges = {ranges: KalibroGem::Entities::Range.ranges_of(params[:metric_configuration_id]).map { |range| range.to_hash }}
 
     respond_to do |format|
       format.json { render json: ranges }
