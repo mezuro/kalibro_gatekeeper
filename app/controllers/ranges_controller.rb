@@ -1,6 +1,7 @@
 class RangesController < ApplicationController
   def save
     range = KalibroGem::Entities::Range.new(params[:range])
+    range.metric_configuration_id = params[:metric_configuration_id]
 
     respond_to do |format|
       if range.save
