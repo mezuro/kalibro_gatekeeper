@@ -52,6 +52,12 @@ group :development, :test do
   gem 'factory_girl_rails', '~> 4.4.1'
 
   gem 'mocha', '~> 1.0.0'
+
+  # Deployment
+  gem 'capistrano', "~>3.1.0", require: false
+  gem 'capistrano-rails'
+  gem 'capistrano-bundler'
+  gem 'capistrano-rvm', "~>0.1.0"
 end
 
 # Use ActiveModel has_secure_password
@@ -59,9 +65,6 @@ end
 
 # Use unicorn as the app server
 # gem 'unicorn'
-
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
