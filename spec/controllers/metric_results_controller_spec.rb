@@ -27,7 +27,7 @@ describe MetricResultsController do
     let!(:metric_result) { FactoryGirl.build(:metric_result) }
 
     before :each do
-      KalibroGem::Entities::MetricResult.expects(:descendant_results).with(metric_result.id).returns([metric_result.value])
+      KalibroGem::Entities::MetricResult.expects(:descendant_results).returns([metric_result.value])
     end
 
     context 'json format' do

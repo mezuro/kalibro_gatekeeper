@@ -1,7 +1,6 @@
 class ReadingsController < ApplicationController
   def save
     reading = KalibroGem::Entities::Reading.new(params[:reading])
-    reading.group_id = params[:reading_group_id]
 
     respond_to do |format|
       if reading.save

@@ -8,11 +8,7 @@ class MetricResultsController < ApplicationController
   end
 
   def descendant_results_of
-    response = KalibroGem::Entities::MetricResult.request(:descendant_results_of, {:metric_result_id => params[:id]})[:descendant_result]
-    response = [] if response.nil?
-    response = [response] if response.is_a?(String)
-    response.map {|descendant_result| descendant_result.to_f}
-
+    response = KalibroGem::Entities::MetricResult.descendant_results
     descendant_results = {descendant_results: response}
 
     respond_to do |format|
