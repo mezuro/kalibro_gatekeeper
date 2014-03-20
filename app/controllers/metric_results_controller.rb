@@ -8,7 +8,8 @@ class MetricResultsController < ApplicationController
   end
 
   def descendant_results_of
-    response = KalibroGem::Entities::MetricResult.descendant_results
+    metric_result = KalibroGem::Entities::MetricResult.new(id: params[:id].to_i)
+    response = metric_result.descendant_results
     descendant_results = {descendant_results: response}
 
     respond_to do |format|
