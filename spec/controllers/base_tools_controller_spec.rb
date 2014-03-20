@@ -30,19 +30,39 @@ describe BaseToolsController do
   describe 'get' do
     let!(:base_tool) { FactoryGirl.build(:base_tool) }
 
-    before :each do
-      KalibroGem::Entities::BaseTool.expects(:find_by_name).with(base_tool.name).returns(base_tool)
-    end
-
-    context 'json format' do
+    context 'with and existent base tool' do
       before :each do
-        post :get, name: base_tool.name, format: :json
+        KalibroGem::Entities::BaseTool.expects(:find_by_name).with(base_tool.name).returns(base_tool)
       end
 
-      it { should respond_with(:success) }
+      context 'json format' do
+        before :each do
+          post :get, name: base_tool.name, format: :json
+        end
 
-      it 'returns the list of names' do
-        JSON.parse(response.body).should eq(JSON.parse(base_tool.to_hash.to_json))
+        it { should respond_with(:success) }
+
+        it 'returns the list of names' do
+          JSON.parse(response.body).should eq(JSON.parse(base_tool.to_hash.to_json))
+        end
+      end
+    end
+
+    context 'with and inexistent base tool' do
+      before :each do
+        KalibroGem::Entities::BaseTool.expects(:find_by_name).with("MyBaseTool").raises(KalibroGem::Errors::RecordNotFound)
+      end
+
+      context 'json format' do
+        before :each do
+          post :get, name: "MyBaseTool", format: :json
+        end
+
+        it { should respond_with(:unprocessable_entity) }
+
+        it 'returns configuration' do
+          JSON.parse(response.body).should eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+        end
       end
     end
   end
