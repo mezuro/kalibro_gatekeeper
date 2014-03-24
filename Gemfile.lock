@@ -31,7 +31,7 @@ GEM
       gyoku (>= 0.4.0)
       nokogiri
     arel (5.0.0)
-    atomic (1.1.15)
+    atomic (1.1.16)
     builder (3.2.2)
     capistrano (3.1.0)
       i18n
@@ -76,7 +76,7 @@ GEM
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
     json (1.8.1)
-    kalibro_gem (0.0.2.rc2)
+    kalibro_gem (0.0.2.rc3)
       activesupport (~> 4.1.0.rc1)
       savon (~> 2.3.3)
     libv8 (3.16.14.3)
@@ -85,8 +85,8 @@ GEM
       treetop (~> 1.4.8)
     metaclass (0.0.4)
     mime-types (1.25.1)
-    mini_portile (0.5.2)
-    minitest (5.3.0)
+    mini_portile (0.5.3)
+    minitest (5.3.1)
     mocha (1.0.0)
       metaclass (~> 0.0.1)
     multi_json (1.9.0)
@@ -176,7 +176,7 @@ GEM
       libv8 (~> 3.16.14.0)
       ref
     thor (0.18.1)
-    thread_safe (0.2.0)
+    thread_safe (0.3.1)
       atomic (>= 1.1.7, < 2)
     tilt (1.4.1)
     tins (1.0.0)
@@ -207,7 +207,7 @@ DEPENDENCIES
   factory_girl_rails (~> 4.4.1)
   jbuilder (~> 2.0)
   jquery-rails
-  kalibro_gem (~> 0.0.2.rc2)
+  kalibro_gem (~> 0.0.2.rc3)
   mocha (~> 1.0.0)
   rails (= 4.1.0.rc1)
   rspec-rails (~> 2.14.0)
