@@ -82,5 +82,5 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # Kalibro URL
-  KalibroGem.configure_with(Rails.root.join('config', 'kalibro.yml'))
+  #KalibroGem.configure_with(Rails.root.join('config', 'kalibro.yml'))
 end

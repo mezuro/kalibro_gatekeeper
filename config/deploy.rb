@@ -40,8 +40,7 @@ set :user, 'gatekeeper'
 # RVM
 set :rvm_ruby_string, :local              # use the same ruby as used locally for deployment
 set :rvm_autolibs_flag, "read-only"       # more info: rvm help autolibs
-set :rvm_type, :user
-set :rvm_install_with_sudo, true
+set :rvm_type, :auto
 
 namespace :deploy do
   desc 'Restart application'
@@ -65,7 +64,7 @@ namespace :deploy do
   before :compile_assets, :config_symlinks do
     on roles(:web) do
       execute "ln -s #{File.join(deploy_to, 'shared', 'config/database.yml')} #{File.join(release_path, 'config/database.yml')}"
-      execute "ln -s #{File.join(deploy_to, 'shared', 'config/kalibro.yml')} #{File.join(release_path, 'config/kalibro.yml')}"
+      #execute "ln -s #{File.join(deploy_to, 'shared', 'config/kalibro.yml')} #{File.join(release_path, 'config/kalibro.yml')}"
     end
   end
 
