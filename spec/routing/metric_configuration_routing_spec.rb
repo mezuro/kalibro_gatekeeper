@@ -1,14 +1,14 @@
 require "spec_helper"
 
-describe MetricConfigurationsController do
+describe MetricConfigurationsController, :type => :routing do
   describe "routing" do
-    it { should route(:post, 'metric_configurations/save').
+    it { is_expected.to route(:post, 'metric_configurations/save').
                   to(controller: :metric_configurations, action: :save) }
-    it { should route(:post, 'metric_configurations/get').
+    it { is_expected.to route(:post, 'metric_configurations/get').
                   to(controller: :metric_configurations, action: :get) }
-    it { should route(:post, 'metric_configurations/destroy').
+    it { is_expected.to route(:post, 'metric_configurations/destroy').
                   to(controller: :metric_configurations, action: :destroy) }
-    it { should route(:post, 'metric_configurations/of').
+    it { is_expected.to route(:post, 'metric_configurations/of').
                   to(controller: :metric_configurations, action: :of) }
   end
 end

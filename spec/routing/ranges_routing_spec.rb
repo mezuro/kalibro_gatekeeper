@@ -1,12 +1,12 @@
 require "spec_helper"
 
-describe RangesController do
+describe RangesController, :type => :routing do
   describe "routing" do
-    it { should route(:post, 'ranges/save').
+    it { is_expected.to route(:post, 'ranges/save').
                   to(controller: :ranges, action: :save) }
-    it { should route(:post, 'ranges/destroy').
+    it { is_expected.to route(:post, 'ranges/destroy').
                   to(controller: :ranges, action: :destroy) }
-    it { should route(:post, 'ranges/of').
+    it { is_expected.to route(:post, 'ranges/of').
                   to(controller: :ranges, action: :of) }
   end
 end

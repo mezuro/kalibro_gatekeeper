@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe RepositoriesController do
+describe RepositoriesController, :type => :controller do
   describe 'save' do
     let(:repository) { FactoryGirl.build(:repository, id: nil) }
 
@@ -14,10 +14,10 @@ describe RepositoriesController do
           post :save, repository: repository.to_hash, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns the repository' do
-          JSON.parse(response.body).should eq(JSON.parse(repository.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(repository.to_hash.to_json))
         end
       end
     end
@@ -32,10 +32,10 @@ describe RepositoriesController do
           post :save, repository: repository.to_hash, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns repository' do
-          JSON.parse(response.body).should eq(JSON.parse(repository.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(repository.to_hash.to_json))
         end
       end
     end
@@ -55,10 +55,10 @@ describe RepositoriesController do
           post :destroy, id: repository.id, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns repository' do
-          JSON.parse(response.body).should eq(JSON.parse(repository.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(repository.to_hash.to_json))
         end
       end
     end
@@ -73,10 +73,10 @@ describe RepositoriesController do
           post :destroy, id: repository.id, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns repository' do
-          JSON.parse(response.body).should eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
         end
       end
     end
@@ -95,10 +95,10 @@ describe RepositoriesController do
         get :of, project_id: project.id, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of names' do
-        JSON.parse(response.body).should eq(JSON.parse({repositories: repositories.map { |c| c.to_hash }}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({repositories: repositories.map { |c| c.to_hash }}.to_json))
       end
     end
   end
@@ -118,10 +118,10 @@ describe RepositoriesController do
           post :process_repository, id: repository.id, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns confirmation' do
-          JSON.parse(response.body).should eq(JSON.parse({processing: repository.id}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({processing: repository.id}.to_json))
         end
       end
     end
@@ -141,10 +141,10 @@ describe RepositoriesController do
           post :cancel_process, id: repository.id, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns confirmation' do
-          JSON.parse(response.body).should eq(JSON.parse({canceled_processing_for: repository.id}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({canceled_processing_for: repository.id}.to_json))
         end
       end
     end
@@ -157,10 +157,10 @@ describe RepositoriesController do
       get :supported_types, format: :json
     end
 
-    it { should respond_with(:success) }
+    it { is_expected.to respond_with(:success) }
 
     it 'returns confirmation' do
-      JSON.parse(response.body).should eq(JSON.parse({supported_types: ["GIT"]}.to_json))
+      expect(JSON.parse(response.body)).to eq(JSON.parse({supported_types: ["GIT"]}.to_json))
     end
   end
 end

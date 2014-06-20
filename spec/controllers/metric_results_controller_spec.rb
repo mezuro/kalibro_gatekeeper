@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe MetricResultsController do
+describe MetricResultsController, :type => :controller do
   describe 'history_of_metric' do
     let!(:metric) { FactoryGirl.build(:metric) }
     let!(:module_result) { FactoryGirl.build(:module_result) }
@@ -15,10 +15,10 @@ describe MetricResultsController do
         post :history_of_metric, metric_name: metric.name, module_result_id: module_result.id, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        JSON.parse(response.body).should eq(JSON.parse({date_metric_results: date_metric_results.map { |date_metric_result| date_metric_result.to_hash }}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({date_metric_results: date_metric_results.map { |date_metric_result| date_metric_result.to_hash }}.to_json))
       end
     end
   end
@@ -35,10 +35,10 @@ describe MetricResultsController do
         post :descendant_results_of, id: metric_result.id, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of values' do
-        JSON.parse(response.body).should eq(JSON.parse({descendant_results: [metric_result.value]}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({descendant_results: [metric_result.value]}.to_json))
       end
     end
   end
@@ -56,10 +56,10 @@ describe MetricResultsController do
         post :of, module_result_id: module_result.id, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of names' do
-        JSON.parse(response.body).should eq(JSON.parse({metric_results: [metric_result.to_hash]}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({metric_results: [metric_result.to_hash]}.to_json))
       end
     end
   end

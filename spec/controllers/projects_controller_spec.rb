@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ProjectsController do
+describe ProjectsController, :type => :controller do
   describe 'exists' do
     before :each do
       KalibroGem::Entities::Project.expects(:exists?).with(42).returns(true)
@@ -11,10 +11,10 @@ describe ProjectsController do
         post :exists, id: 42, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of names' do
-        JSON.parse(response.body).should eq(JSON.parse({exists: true}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({exists: true}.to_json))
       end
     end
   end
@@ -31,7 +31,7 @@ describe ProjectsController do
         get :all
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
     end
 
     context 'json format' do
@@ -39,10 +39,10 @@ describe ProjectsController do
         get :all, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of names' do
-        JSON.parse(response.body).should eq(JSON.parse({projects: projects.map { |c| c.to_hash }}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({projects: projects.map { |c| c.to_hash }}.to_json))
       end
     end
   end
@@ -60,10 +60,10 @@ describe ProjectsController do
           post :save, project: project.to_hash, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns the project' do
-          JSON.parse(response.body).should eq(JSON.parse(project.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(project.to_hash.to_json))
         end
       end
     end
@@ -78,10 +78,10 @@ describe ProjectsController do
           post :save, project: project.to_hash, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns project' do
-          JSON.parse(response.body).should eq(JSON.parse(project.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(project.to_hash.to_json))
         end
       end
     end
@@ -101,10 +101,10 @@ describe ProjectsController do
           post :get, id: project.id, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns project' do
-          JSON.parse(response.body).should eq(JSON.parse(project.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(project.to_hash.to_json))
         end
       end
     end
@@ -119,10 +119,10 @@ describe ProjectsController do
           post :get, id: project.id, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns project' do
-          JSON.parse(response.body).should eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
         end
       end
     end
@@ -143,10 +143,10 @@ describe ProjectsController do
           post :destroy, id: project.id, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns project' do
-          JSON.parse(response.body).should eq(JSON.parse(project.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(project.to_hash.to_json))
         end
       end
     end
@@ -161,10 +161,10 @@ describe ProjectsController do
           post :destroy, id: project.id, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns project' do
-          JSON.parse(response.body).should eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
         end
       end
     end

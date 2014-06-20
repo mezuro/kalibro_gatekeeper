@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ModuleResultsController do
+describe ModuleResultsController, :type => :controller do
   describe 'get' do
     let(:module_result) { FactoryGirl.build(:module_result) }
 
@@ -14,10 +14,10 @@ describe ModuleResultsController do
           post :get, id: module_result.id, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns module_result' do
-          JSON.parse(response.body).should eq(JSON.parse(module_result.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(module_result.to_hash.to_json))
         end
       end
     end
@@ -32,10 +32,10 @@ describe ModuleResultsController do
           post :get, id: module_result.id, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns module_result' do
-          JSON.parse(response.body).should eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
         end
       end
     end
@@ -57,10 +57,10 @@ describe ModuleResultsController do
           post :children_of, id: module_result.id, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns module_result' do
-          JSON.parse(response.body).should eq(JSON.parse({module_results: children.map { |c| c.to_hash }}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({module_results: children.map { |c| c.to_hash }}.to_json))
         end
       end
     end
@@ -75,10 +75,10 @@ describe ModuleResultsController do
           post :children_of, id: module_result.id, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns module_result' do
-          JSON.parse(response.body).should eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
         end
       end
     end
@@ -97,10 +97,10 @@ describe ModuleResultsController do
         post :history_of, id: module_result.id, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        JSON.parse(response.body).should eq(JSON.parse({date_module_results: date_module_results.map { |date_module_result| date_module_result.to_hash }}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({date_module_results: date_module_results.map { |date_module_result| date_module_result.to_hash }}.to_json))
       end
     end
   end

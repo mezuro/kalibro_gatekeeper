@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ConfigurationsController do
+describe ConfigurationsController, :type => :controller do
   describe 'exists' do
     before :each do
       KalibroGem::Entities::Configuration.expects(:exists?).with(42).returns(true)
@@ -11,10 +11,10 @@ describe ConfigurationsController do
         post :exists, id: 42, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of names' do
-        JSON.parse(response.body).should eq(JSON.parse({exists: true}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({exists: true}.to_json))
       end
     end
   end
@@ -31,7 +31,7 @@ describe ConfigurationsController do
         get :all
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
     end
 
     context 'json format' do
@@ -39,10 +39,10 @@ describe ConfigurationsController do
         get :all, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of names' do
-        JSON.parse(response.body).should eq(JSON.parse({configurations: configurations.map { |c| c.to_hash }}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({configurations: configurations.map { |c| c.to_hash }}.to_json))
       end
     end
   end
@@ -60,10 +60,10 @@ describe ConfigurationsController do
           post :save, configuration: configuration.to_hash, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns the configuration' do
-          JSON.parse(response.body).should eq(JSON.parse(configuration.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(configuration.to_hash.to_json))
         end
       end
     end
@@ -78,10 +78,10 @@ describe ConfigurationsController do
           post :save, configuration: configuration.to_hash, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns configuration' do
-          JSON.parse(response.body).should eq(JSON.parse(configuration.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(configuration.to_hash.to_json))
         end
       end
     end
@@ -101,10 +101,10 @@ describe ConfigurationsController do
           post :get, id: configuration.id, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns configuration' do
-          JSON.parse(response.body).should eq(JSON.parse(configuration.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(configuration.to_hash.to_json))
         end
       end
     end
@@ -119,10 +119,10 @@ describe ConfigurationsController do
           post :get, id: configuration.id, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns configuration' do
-          JSON.parse(response.body).should eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
         end
       end
     end
@@ -143,10 +143,10 @@ describe ConfigurationsController do
           post :destroy, id: configuration.id, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns configuration' do
-          JSON.parse(response.body).should eq(JSON.parse(configuration.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(configuration.to_hash.to_json))
         end
       end
     end
@@ -161,10 +161,10 @@ describe ConfigurationsController do
           post :destroy, id: configuration.id, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns configuration' do
-          JSON.parse(response.body).should eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
         end
       end
     end

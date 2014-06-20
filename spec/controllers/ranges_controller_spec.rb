@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe RangesController do
+describe RangesController, :type => :controller do
   describe 'save' do
     let(:range) { FactoryGirl.build(:range, id: nil) }
     let(:range_params) { range.to_hash }
@@ -16,10 +16,10 @@ describe RangesController do
           post :save, range: range_params, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns the range' do
-          JSON.parse(response.body).should eq(JSON.parse(range.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(range.to_hash.to_json))
         end
       end
     end
@@ -35,10 +35,10 @@ describe RangesController do
           post :save, range: range_params, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns range' do
-          JSON.parse(response.body).should eq(JSON.parse(range.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(range.to_hash.to_json))
         end
       end
     end
@@ -59,10 +59,10 @@ describe RangesController do
           post :destroy, id: range.id, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns range' do
-          JSON.parse(response.body).should eq(JSON.parse(range.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(range.to_hash.to_json))
         end
       end
     end
@@ -77,10 +77,10 @@ describe RangesController do
           post :destroy, id: range.id, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns range' do
-          JSON.parse(response.body).should eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
         end
       end
     end
@@ -99,10 +99,10 @@ describe RangesController do
         get :of, reading_id: reading.id, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of names' do
-        JSON.parse(response.body).should eq(JSON.parse({ranges: ranges.map { |c| c.to_hash }}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({ranges: ranges.map { |c| c.to_hash }}.to_json))
       end
     end
   end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BaseToolsController do
+describe BaseToolsController, :type => :controller do
   describe 'all_names' do
     before :each do
       KalibroGem::Entities::BaseTool.expects(:all_names).returns(["Analizo"])
@@ -11,7 +11,7 @@ describe BaseToolsController do
         get :all_names
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
     end
 
     context 'json format' do
@@ -19,10 +19,10 @@ describe BaseToolsController do
         get :all_names, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of names' do
-        JSON.parse(response.body).should eq(JSON.parse({base_tool_names: ["Analizo"]}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({base_tool_names: ["Analizo"]}.to_json))
       end
     end
   end
@@ -40,10 +40,10 @@ describe BaseToolsController do
           post :get, name: base_tool.name, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns the list of names' do
-          JSON.parse(response.body).should eq(JSON.parse(base_tool.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(base_tool.to_hash.to_json))
         end
       end
     end
@@ -58,10 +58,10 @@ describe BaseToolsController do
           post :get, name: "MyBaseTool", format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns configuration' do
-          JSON.parse(response.body).should eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
         end
       end
     end

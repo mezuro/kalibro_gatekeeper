@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ProcessingsController do
+describe ProcessingsController, :type => :controller do
   describe 'has' do
     let!(:repository) { FactoryGirl.build(:repository) }
 
@@ -13,10 +13,10 @@ describe ProcessingsController do
         post :has, repository_id: repository.id, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        JSON.parse(response.body).should eq(JSON.parse({exists: true}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({exists: true}.to_json))
       end
     end
   end
@@ -33,10 +33,10 @@ describe ProcessingsController do
         post :has_ready, repository_id: repository.id, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        JSON.parse(response.body).should eq(JSON.parse({exists: true}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({exists: true}.to_json))
       end
     end
   end
@@ -54,10 +54,10 @@ describe ProcessingsController do
         post :has_after, repository_id: repository.id, date: date, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        JSON.parse(response.body).should eq(JSON.parse({exists: true}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({exists: true}.to_json))
       end
     end
   end
@@ -75,10 +75,10 @@ describe ProcessingsController do
         post :has_before, repository_id: repository.id, date: date, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        JSON.parse(response.body).should eq(JSON.parse({exists: true}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({exists: true}.to_json))
       end
     end
   end
@@ -95,10 +95,10 @@ describe ProcessingsController do
         post :last_state_of, repository_id: repository.id, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        JSON.parse(response.body).should eq(JSON.parse({state: "READY"}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({state: "READY"}.to_json))
       end
     end
   end
@@ -116,10 +116,10 @@ describe ProcessingsController do
         post :last_ready_of, repository_id: repository.id, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        JSON.parse(response.body).should eq(JSON.parse({processing: processing.to_hash}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({processing: processing.to_hash}.to_json))
       end
     end
   end
@@ -137,10 +137,10 @@ describe ProcessingsController do
         post :last_of, repository_id: repository.id, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        JSON.parse(response.body).should eq(JSON.parse({processing: processing.to_hash}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({processing: processing.to_hash}.to_json))
       end
     end
   end
@@ -158,10 +158,10 @@ describe ProcessingsController do
         post :first_of, repository_id: repository.id, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        JSON.parse(response.body).should eq(JSON.parse({processing: processing.to_hash}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({processing: processing.to_hash}.to_json))
       end
     end
   end
@@ -180,10 +180,10 @@ describe ProcessingsController do
         post :first_after_of, repository_id: repository.id, date: date, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        JSON.parse(response.body).should eq(JSON.parse({processing: processing.to_hash}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({processing: processing.to_hash}.to_json))
       end
     end
   end
@@ -202,10 +202,10 @@ describe ProcessingsController do
         post :last_before_of, repository_id: repository.id, date: date, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        JSON.parse(response.body).should eq(JSON.parse({processing: processing.to_hash}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({processing: processing.to_hash}.to_json))
       end
     end
   end

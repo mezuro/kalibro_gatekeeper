@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe MetricConfigurationsController do
+describe MetricConfigurationsController, :type => :controller do
   describe 'save' do
     let(:metric_configuration) { FactoryGirl.build(:metric_configuration, id: nil) }
     let(:metric_configuration_params) { metric_configuration.to_hash }
@@ -16,10 +16,10 @@ describe MetricConfigurationsController do
           post :save, metric_configuration: metric_configuration_params, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns the metric_configuration' do
-          JSON.parse(response.body).should eq(JSON.parse(metric_configuration.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration.to_hash.to_json))
         end
       end
     end
@@ -35,10 +35,10 @@ describe MetricConfigurationsController do
           post :save, metric_configuration: metric_configuration_params, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns metric_configuration' do
-          JSON.parse(response.body).should eq(JSON.parse(metric_configuration.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration.to_hash.to_json))
         end
       end
     end
@@ -57,10 +57,10 @@ describe MetricConfigurationsController do
           post :get, id: metric_configuration.id, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns metric_configuration' do
-          JSON.parse(response.body).should eq(JSON.parse(metric_configuration.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration.to_hash.to_json))
         end
       end
     end
@@ -75,10 +75,10 @@ describe MetricConfigurationsController do
           post :get, id: metric_configuration.id, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns metric_configuration' do
-          JSON.parse(response.body).should eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
         end
       end
     end
@@ -99,10 +99,10 @@ describe MetricConfigurationsController do
           post :destroy, id: metric_configuration.id, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns metric_configuration' do
-          JSON.parse(response.body).should eq(JSON.parse(metric_configuration.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration.to_hash.to_json))
         end
       end
     end
@@ -117,10 +117,10 @@ describe MetricConfigurationsController do
           post :destroy, id: metric_configuration.id, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns metric_configuration' do
-          JSON.parse(response.body).should eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
         end
       end
     end
@@ -139,10 +139,10 @@ describe MetricConfigurationsController do
         get :of, configuration_id: configuration.id, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of names' do
-        JSON.parse(response.body).should eq(JSON.parse({metric_configurations: metric_configurations.map { |c| c.to_hash }}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({metric_configurations: metric_configurations.map { |c| c.to_hash }}.to_json))
       end
     end
   end

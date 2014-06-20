@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ReadingsController do
+describe ReadingsController, :type => :controller do
   describe 'save' do
     let(:reading) { FactoryGirl.build(:reading, id: nil) }
     let(:reading_params) { reading.to_hash }
@@ -16,10 +16,10 @@ describe ReadingsController do
           post :save, reading: reading_params, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns the reading' do
-          JSON.parse(response.body).should eq(JSON.parse(reading.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(reading.to_hash.to_json))
         end
       end
     end
@@ -35,10 +35,10 @@ describe ReadingsController do
           post :save, reading: reading_params, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns reading' do
-          JSON.parse(response.body).should eq(JSON.parse(reading.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(reading.to_hash.to_json))
         end
       end
     end
@@ -57,10 +57,10 @@ describe ReadingsController do
           post :get, id: reading.id, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns reading' do
-          JSON.parse(response.body).should eq(JSON.parse(reading.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(reading.to_hash.to_json))
         end
       end
     end
@@ -75,10 +75,10 @@ describe ReadingsController do
           post :get, id: reading.id, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns reading' do
-          JSON.parse(response.body).should eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
         end
       end
     end
@@ -98,10 +98,10 @@ describe ReadingsController do
           post :destroy, id: reading.id, format: :json
         end
 
-        it { should respond_with(:success) }
+        it { is_expected.to respond_with(:success) }
 
         it 'returns reading' do
-          JSON.parse(response.body).should eq(JSON.parse(reading.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(reading.to_hash.to_json))
         end
       end
     end
@@ -116,10 +116,10 @@ describe ReadingsController do
           post :destroy, id: reading.id, format: :json
         end
 
-        it { should respond_with(:unprocessable_entity) }
+        it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns reading' do
-          JSON.parse(response.body).should eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
         end
       end
     end
@@ -138,10 +138,10 @@ describe ReadingsController do
         get :of, reading_group_id: reading_group.id, format: :json
       end
 
-      it { should respond_with(:success) }
+      it { is_expected.to respond_with(:success) }
 
       it 'returns the list of names' do
-        JSON.parse(response.body).should eq(JSON.parse({readings: readings.map { |c| c.to_hash }}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({readings: readings.map { |c| c.to_hash }}.to_json))
       end
     end
   end
