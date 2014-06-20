@@ -3,7 +3,10 @@
 
 # TEAM
 
-    Rafael Reggiani Manzo - rr.manzo at gmail.com
+    Copyright 2014
+    --------------
+
+    Rafael Reggiani Manzo (rr.manzo at gmail.com)
 
 # THANKSs
 
@@ -14,3 +17,5 @@
       FactoryGirl
       ShouldaMatchers
       Simplecov
+      Cucumber
+      Capybara
