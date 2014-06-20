@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe ProcessingsController, :type => :controller do
   describe 'has' do

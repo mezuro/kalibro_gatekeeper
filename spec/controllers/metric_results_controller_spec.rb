@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe MetricResultsController, :type => :controller do
   describe 'history_of_metric' do

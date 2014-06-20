@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe BaseToolsController, :type => :controller do
   describe 'all_names' do

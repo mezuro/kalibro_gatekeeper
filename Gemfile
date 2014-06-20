@@ -38,7 +38,7 @@ gem 'spring', group: :development
 
 group :test do
   # Easier test writing
-  gem "shoulda-matchers", require: false # not requiring is necessary to avoid warnings from minitest 5, with version 2.6 this might get fixed
+  gem "shoulda-matchers"
 
   # Test coverage
   gem 'simplecov', require: false
@@ -46,7 +46,7 @@ end
 
 group :development, :test do
   # Test framework
-  gem 'rspec-rails', '~> 2.99.0'
+  gem 'rspec-rails', '~> 3.0.1'
 
   # Fixtures made easy
   gem 'factory_girl_rails', '~> 4.4.1'

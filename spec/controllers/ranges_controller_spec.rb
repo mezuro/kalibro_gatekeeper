@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe RangesController, :type => :controller do
   describe 'save' do

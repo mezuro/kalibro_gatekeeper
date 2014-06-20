@@ -1,4 +1,4 @@
-require "spec_helper"
+require "rails_helper"
 
 describe RangesController, :type => :routing do
   describe "routing" do
