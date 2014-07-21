@@ -1,14 +1,12 @@
 class ProjectsController < ApplicationController
   def exists
-    exists = { exists: KalibroGem::Entities::Project.exists?(params[:id]) }
-
     respond_to do |format|
-      format.json { render json: exists }
+      format.json { render json: KalibroProcessor.request("projects/#{params[:id]}/exists", {}, :get) }
     end
   end
 
   def all
-    projects = {projects: KalibroGem::Entities::Project.all.map { |project| project.to_hash }}
+    projects = KalibroProcessor.request("projects", {}, :get)
 
     respond_to do |format|
       format.html { render json: projects }
@@ -16,48 +14,44 @@ class ProjectsController < ApplicationController
     end
   end
 
+  # In the future, this method should get splitted according to https://www.pivotaltracker.com/story/show/75394662
   def save
-    project = KalibroGem::Entities::Project.new(params[:project])
+    if !params['project']['id'].nil? && params['project']['id'].to_i != 0 && KalibroProcessor.request("projects/#{params['project']['id']}/exists", {}, :get)['exists']
+      response = KalibroProcessor.request("projects/#{params['project']['id']}", {'project' => params['project']}, :put)
+    else
+      response = KalibroProcessor.request("projects", {'project' => params['project']}) # Justs send projects instead of all the params
+    end
 
     respond_to do |format|
-      if project.save
-        format.json { render json: project.to_hash }
+      if response['project']['errors'].nil?
+        format.json { render json: response['project'] }
       else
-        format.json { render json: project.to_hash, status: :unprocessable_entity }
+        format.json { render json: response['project'], status: :unprocessable_entity }
       end
     end
   end
 
   def get
-    begin
-      project = KalibroGem::Entities::Project.find(params[:id])
-    rescue KalibroGem::Errors::RecordNotFound
-      project = {error: 'RecordNotFound'}
-    end
+    response = KalibroProcessor.request("projects/#{params[:id]}", {}, :get)
 
     respond_to do |format|
-      if project.is_a?(KalibroGem::Entities::Project)
-        format.json { render json: project.to_hash }
+      if response["error"].nil?
+        # KalibroGatekeeperClient does not expects these fields
+        response["project"].delete("created_at")
+        response["project"].delete("updated_at")
+
+        format.json { render json: response["project"] }
       else
-        format.json { render json: project, status: :unprocessable_entity }
+        format.json { render json: response, status: :unprocessable_entity }
       end
     end
   end
 
   def destroy
-    begin
-      project = KalibroGem::Entities::Project.find(params[:id])
-      project.destroy
-    rescue KalibroGem::Errors::RecordNotFound
-      project = {error: 'RecordNotFound'}
-    end
+    response = KalibroProcessor.request("projects/#{params[:id]}", {}, :delete)
 
     respond_to do |format|
-      if project.is_a?(KalibroGem::Entities::Project)
-        format.json { render json: project.to_hash }
-      else
-        format.json { render json: project, status: :unprocessable_entity }
-      end
+      format.json { render json: response }
     end
   end
 end
