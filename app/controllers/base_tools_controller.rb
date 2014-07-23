@@ -1,6 +1,6 @@
 class BaseToolsController < ApplicationController
   def all_names
-    names = {base_tool_names: KalibroGem::Entities::BaseTool.all_names}
+    names = KalibroProcessor.request("base_tools", {}, :get)
 
     respond_to do |format|
       format.html { render json: names }
@@ -9,15 +9,11 @@ class BaseToolsController < ApplicationController
   end
 
   def get
-    begin
-      base_tool = KalibroGem::Entities::BaseTool.find_by_name(params[:name])
-    rescue KalibroGem::Errors::RecordNotFound
-      base_tool = {error: 'RecordNotFound'}
-    end
+    base_tool = KalibroProcessor.request("base_tools/#{params[:name]}/find", {}, :get)
 
     respond_to do |format|
-      if base_tool.is_a?(KalibroGem::Entities::BaseTool)
-        format.json { render json: base_tool.to_hash }
+      if base_tool[:error].nil?
+        format.json { render json: base_tool }
       else
         format.json { render json: base_tool, status: :unprocessable_entity }
       end
