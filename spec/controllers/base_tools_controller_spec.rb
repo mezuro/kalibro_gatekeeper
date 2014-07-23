@@ -28,28 +28,30 @@ describe BaseToolsController, :type => :controller do
   end
 
   describe 'get' do
-    let!(:base_tool_hash) { FactoryGirl.build(:base_tool).to_hash }
+    let!(:base_tool_hash) { Hash[FactoryGirl.attributes_for(:base_tool).map { |k,v| [k.to_s, v.to_s]}] }
 
     context 'with and existent base tool' do
       before :each do
-        KalibroProcessor.expects(:request).with("base_tools/#{base_tool_hash[:name]}/find", {}, :get).returns({base_tool: base_tool_hash})
+        base_tool_hash["supported_metrics"] = {"code" => FactoryGirl.build(:metric)}
+        KalibroProcessor.expects(:request).with("base_tools/#{base_tool_hash["name"]}/find", {}, :get).returns({"base_tool" => base_tool_hash})
       end
 
       context 'json format' do
         before :each do
-          post :get, name: base_tool_hash[:name], format: :json
+          post :get, name: base_tool_hash["name"], format: :json
         end
 
         it { is_expected.to respond_with(:success) }
 
         it 'returns the base tool' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse({base_tool: base_tool_hash}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(base_tool_hash.to_json))
         end
       end
     end
+
     context 'with an inexistent base tool' do
       let!(:base_tool_name) {"MyBaseTool"}
-      let!(:base_tool_error) {{error: "Base tool #{base_tool_name} not found."}}
+      let!(:base_tool_error) {{"error" => "Base tool #{base_tool_name} not found."}}
       before :each do
         KalibroProcessor.expects(:request).with("base_tools/#{base_tool_name}/find", {}, :get).returns(base_tool_error)
       end
