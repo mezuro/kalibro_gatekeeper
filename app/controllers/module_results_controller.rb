@@ -12,18 +12,13 @@ class ModuleResultsController < ApplicationController
   end
 
   def children_of
-    begin
-      module_result = KalibroGem::Entities::ModuleResult.find(params[:id])
-      children = {module_results: module_result.children.map { |m| m.to_hash }}
-    rescue KalibroGem::Errors::RecordNotFound
-      module_result = {error: 'RecordNotFound'}
-    end
+    children = KalibroProcessor.request("module_results/#{params[:id]}/children", {}, :get)
 
     respond_to do |format|
-      if module_result.is_a?(KalibroGem::Entities::ModuleResult)
-        format.json { render json: children }
+      if children.is_a?(Array) #Processor returns an array of children when sucessful and an error hash when it fails.
+        format.json { render json: {"module_results" => children} }
       else
-        format.json { render json: module_result, status: :unprocessable_entity }
+        format.json { render json: children, status: :unprocessable_entity }
       end
     end
   end

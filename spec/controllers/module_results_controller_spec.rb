@@ -43,50 +43,51 @@ describe ModuleResultsController, :type => :controller do
       end
     end
   end
-
   describe 'children_of' do
-    let(:module_result) { FactoryGirl.build(:module_result) }
+    let!(:module_hash) { Hash[FactoryGirl.attributes_for(:module).map { |k,v| [k.to_s, v.to_s]}] }
+    let!(:module_result_hash) { Hash[FactoryGirl.attributes_for(:module_result).map { |k,v| [k.to_s, v.to_s]}] }
+    let!(:children) { [] }
 
     context 'with and existent module_result' do
-      let!(:children) { [FactoryGirl.build(:module_result, id: 63)] }
-
       before :each do
-        module_result.expects(:children).returns(children)
-        KalibroGem::Entities::ModuleResult.expects(:find).with(module_result.id).returns(module_result)
+        module_result_hash["module"] = module_hash
+        children << module_result_hash
+        children << module_result_hash
+        KalibroProcessor.expects(:request).with("module_results/#{module_result_hash["id"]}/children", {}, :get).returns(children)
       end
 
       context 'json format' do
         before :each do
-          post :children_of, id: module_result.id, format: :json
+          post :children_of, id: module_result_hash["id"], format: :json
         end
 
         it { is_expected.to respond_with(:success) }
 
-        it 'returns module_result' do
+        it 'returns children' do
           expect(JSON.parse(response.body)).to eq(JSON.parse({module_results: children.map { |c| c.to_hash }}.to_json))
         end
       end
     end
 
     context 'with and inexistent module_result' do
+      let!(:error_hash) {{"error"=> "RecordNotFound"}}
       before :each do
-        KalibroGem::Entities::ModuleResult.expects(:find).with(module_result.id).raises(KalibroGem::Errors::RecordNotFound)
+        KalibroProcessor.expects(:request).with("module_results/#{module_result_hash["id"]}/children", {}, :get).returns(error_hash)
       end
 
       context 'json format' do
         before :each do
-          post :children_of, id: module_result.id, format: :json
+          post :children_of, id: module_result_hash["id"], format: :json
         end
 
         it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns module_result' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(error_hash.to_json))
         end
       end
     end
   end
-
   describe 'history_of' do
     let!(:module_result) { FactoryGirl.build(:module_result) }
     let!(:date_module_results) { [FactoryGirl.build(:date_module_result)] }
