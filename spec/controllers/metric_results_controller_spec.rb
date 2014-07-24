@@ -27,7 +27,7 @@ describe MetricResultsController, :type => :controller do
     let!(:metric_result) { FactoryGirl.build(:metric_result) }
 
     before :each do
-      KalibroGem::Entities::MetricResult.any_instance.expects(:descendant_results).returns([metric_result.value])
+      KalibroProcessor.expects(:request).with("metric_results/#{metric_result.id}/descendant_values", {}, :get).returns({descendant_results: metric_result.value})
     end
 
     context 'json format' do
@@ -38,7 +38,7 @@ describe MetricResultsController, :type => :controller do
       it { is_expected.to respond_with(:success) }
 
       it 'returns the list of values' do
-        expect(JSON.parse(response.body)).to eq(JSON.parse({descendant_results: [metric_result.value]}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({descendant_results: metric_result.value}.to_json))
       end
     end
   end
@@ -48,7 +48,7 @@ describe MetricResultsController, :type => :controller do
     let!(:metric_result) { FactoryGirl.build(:metric_result) }
 
     before :each do
-      KalibroGem::Entities::MetricResult.expects(:metric_results_of).with(module_result.id).returns([metric_result.to_hash])
+      KalibroProcessor.expects(:request).with("module_results/#{module_result.id}/metric_results", {}, :get).returns({metric_results: metric_result})
     end
 
     context 'json format' do
@@ -59,7 +59,7 @@ describe MetricResultsController, :type => :controller do
       it { is_expected.to respond_with(:success) }
 
       it 'returns the list of names' do
-        expect(JSON.parse(response.body)).to eq(JSON.parse({metric_results: [metric_result.to_hash]}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({metric_results: metric_result}.to_json))
       end
     end
   end
