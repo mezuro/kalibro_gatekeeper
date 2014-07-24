@@ -7,6 +7,8 @@ class ProjectsController < ApplicationController
 
   def all
     projects = KalibroProcessor.request("projects", {}, :get)
+    # the client is not expecting those dates
+    projects["projects"].each { |project| project.delete("created_at"); project.delete("updated_at") }
 
     respond_to do |format|
       format.html { render json: projects }

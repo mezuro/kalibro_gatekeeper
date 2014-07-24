@@ -23,7 +23,7 @@ describe ProjectsController, :type => :controller do
     let!(:projects) { [FactoryGirl.build(:project), FactoryGirl.build(:another_project)] }
 
     before :each do
-      KalibroProcessor.expects(:request).with("projects", {}, :get).returns({projects: projects.map { |c| c.to_hash }})
+      KalibroProcessor.expects(:request).with("projects", {}, :get).returns({"projects" => projects.map { |c| c.to_hash.map { |k,v| [k.to_s, v.to_s] } }})
     end
 
     context 'html format' do
@@ -42,7 +42,7 @@ describe ProjectsController, :type => :controller do
       it { is_expected.to respond_with(:success) }
 
       it 'returns the list of names' do
-        expect(JSON.parse(response.body)).to eq(JSON.parse({projects: projects.map { |c| c.to_hash }}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({projects: projects.map { |c| c.to_hash.map { |k,v| [k.to_s, v.to_s] } }}.to_json))
       end
     end
   end
