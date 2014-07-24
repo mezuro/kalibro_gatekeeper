@@ -2,40 +2,43 @@ require 'rails_helper'
 
 describe ModuleResultsController, :type => :controller do
   describe 'get' do
-    let(:module_result) { FactoryGirl.build(:module_result) }
+    let!(:module_hash) { Hash[FactoryGirl.attributes_for(:module).map { |k,v| [k.to_s, v.to_s]}] }
+    let!(:module_result_hash) { Hash[FactoryGirl.attributes_for(:module_result).map { |k,v| [k.to_s, v.to_s]}] }
 
     context 'with and existent module_result' do
       before :each do
-        KalibroGem::Entities::ModuleResult.expects(:find).with(module_result.id).returns(module_result)
+        module_result_hash["module"] = module_hash
+        KalibroProcessor.expects(:request).with("module_results/#{module_result_hash["id"]}/get", {}, :get).returns(module_result_hash)
       end
 
       context 'json format' do
         before :each do
-          post :get, id: module_result.id, format: :json
+          post :get, id: module_result_hash["id"], format: :json
         end
 
         it { is_expected.to respond_with(:success) }
 
         it 'returns module_result' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse(module_result.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(module_result_hash.to_json))
         end
       end
     end
 
     context 'with and inexistent module_result' do
+      let!(:error_hash) {{"error"=> "RecordNotFound"}}
       before :each do
-        KalibroGem::Entities::ModuleResult.expects(:find).with(module_result.id).raises(KalibroGem::Errors::RecordNotFound)
+        KalibroProcessor.expects(:request).with("module_results/#{module_result_hash["id"]}/get", {}, :get).returns(error_hash)
       end
 
       context 'json format' do
         before :each do
-          post :get, id: module_result.id, format: :json
+          post :get, id: module_result_hash["id"], format: :json
         end
 
         it { is_expected.to respond_with(:unprocessable_entity) }
 
-        it 'returns module_result' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+        it 'returns error hash' do
+          expect(JSON.parse(response.body)).to eq(JSON.parse(error_hash.to_json))
         end
       end
     end

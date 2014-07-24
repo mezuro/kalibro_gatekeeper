@@ -1,14 +1,10 @@
 class ModuleResultsController < ApplicationController
   def get
-    begin
-      module_result = KalibroGem::Entities::ModuleResult.find(params[:id])
-    rescue KalibroGem::Errors::RecordNotFound
-      module_result = {error: 'RecordNotFound'}
-    end
+    module_result = KalibroProcessor.request("module_results/#{params[:id]}/get", {}, :get)
 
     respond_to do |format|
-      if module_result.is_a?(KalibroGem::Entities::ModuleResult)
-        format.json { render json: module_result.to_hash }
+      if module_result["error"].nil?
+        format.json { render json: module_result }
       else
         format.json { render json: module_result, status: :unprocessable_entity }
       end
