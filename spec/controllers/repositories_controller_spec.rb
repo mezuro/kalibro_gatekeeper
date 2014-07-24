@@ -1,41 +1,85 @@
 require 'rails_helper'
 
 describe RepositoriesController, :type => :controller do
-  describe 'save' do
-    let(:repository) { FactoryGirl.build(:repository, id: nil) }
+  pending describe 'save' do
+    let(:params) { {'repository' => Hash[FactoryGirl.attributes_for(:repository, id: 0).map { |k,v| [k.to_s, v.to_s] }] } } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
+    let!(:repository) { FactoryGirl.build(:repository, id: nil) }
 
-    context 'successfully saved' do
-      before :each do
-        KalibroGem::Entities::Repository.any_instance.expects(:save).returns(true)
-      end
-
-      context 'json format' do
+    context 'when creating a repository' do
+      context 'successfully saved' do
         before :each do
-          post :save, repository: repository.to_hash, format: :json
+          KalibroProcessor.expects(:request).with("repositories", params).returns(params)
         end
 
-        it { is_expected.to respond_with(:success) }
+        context 'json format' do
+          before :each do
+            call_params = params.clone
+            call_params[:format] = :json
+            post :save, call_params
+          end
 
-        it 'returns the repository' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse(repository.to_hash.to_json))
+          it { is_expected.to respond_with(:success) }
+
+          it 'returns the repository' do
+            expect(JSON.parse(response.body)).to eq(JSON.parse(params['repository'].to_json))
+          end
+        end
+      end
+
+      context 'failed to save' do
+        let!(:return_params) {params.clone}
+
+        before :each do
+          return_params['repository']["errors"] = ["Error"]
+          KalibroProcessor.expects(:request).with("repositories", params).returns(return_params)
+        end
+
+        context 'json format' do
+          before :each do
+            call_params = params.clone
+            call_params[:format] = :json
+            post :save, call_params
+          end
+
+          it { is_expected.to respond_with(:unprocessable_entity) }
+
+          it 'returns repository' do
+            expect(JSON.parse(response.body)).to eq(JSON.parse(return_params['repository'].to_json))
+          end
         end
       end
     end
 
-    context 'failed to save' do
+    context 'when updating a repository' do
+      let!(:params_update) {params.clone}
+
       before :each do
-        KalibroGem::Entities::Repository.any_instance.expects(:save).returns(false)
+        params_update['repository']['id'] = '1'
+        KalibroProcessor.expects(:request).with("repositories/#{params_update['repository']['id']}", {}, :get).returns({'repository' => repository})
       end
 
-      context 'json format' do
+      context 'with valid params' do
         before :each do
-          post :save, repository: repository.to_hash, format: :json
+                      puts params_update.object_id.inspect
+
+          expectation = params_update.clone
+                      puts expectation.object_id.inspect
+          expectation['repository']['scm_type'] = expectation['repository']['type']
+          expectation['repository'].delete('type')
+          expectation['repository']['period'] = expectation['repository']['process_period']
+          expectation['repository'].delete('process_period')
+
+          KalibroProcessor.expects(:request).with("repositories/#{expectation['repository']['id']}", expectation, :put).returns(params_update)
         end
 
-        it { is_expected.to respond_with(:unprocessable_entity) }
+        context 'json format' do
+          before :each do
+            post :save, 'repository' => params_update['repository'], format: :json
+          end
 
-        it 'returns repository' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse(repository.to_hash.to_json))
+          it 'is expected to respond with success' do
+            is_expected.to respond_with(:success)
+          end
         end
       end
     end
@@ -46,113 +90,59 @@ describe RepositoriesController, :type => :controller do
 
     context 'with and existent repository' do
       before :each do
-        KalibroGem::Entities::Repository.expects(:find).with(repository.id).returns(repository)
+        KalibroProcessor.expects(:request).with("repositories/#{repository.id}", {}, :delete).returns({})
+        post :destroy, id: repository.id, format: :json
       end
 
-      context 'json format' do
-        before :each do
-          repository.expects(:destroy).returns(true)
-          post :destroy, id: repository.id, format: :json
-        end
-
-        it { is_expected.to respond_with(:success) }
-
-        it 'returns repository' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse(repository.to_hash.to_json))
-        end
-      end
-    end
-
-    context 'with and inexistent repository' do
-      before :each do
-        KalibroGem::Entities::Repository.expects(:find).with(repository.id).raises(KalibroGem::Errors::RecordNotFound)
-      end
-
-      context 'json format' do
-        before :each do
-          post :destroy, id: repository.id, format: :json
-        end
-
-        it { is_expected.to respond_with(:unprocessable_entity) }
-
-        it 'returns repository' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
-        end
-      end
+      it { is_expected.to respond_with(:success) }
     end
   end
 
   describe 'of' do
     let!(:project) {FactoryGirl.build(:project)}
-    let!(:repositories) { [FactoryGirl.build(:repository)] }
+    let!(:repositories) { [FactoryGirl.build(:repository).to_hash] }
 
     before :each do
-      KalibroGem::Entities::Repository.expects(:repositories_of).returns(repositories)
+      KalibroProcessor.expects(:request).with("projects/#{project.id}/repositories_of", {}, :get).returns({"repositories" => repositories})
+      get :of, project_id: project.id, format: :json
     end
 
-    context 'json format' do
-      before :each do
-        get :of, project_id: project.id, format: :json
-      end
+    it { is_expected.to respond_with(:success) }
 
-      it { is_expected.to respond_with(:success) }
-
-      it 'returns the list of names' do
-        expect(JSON.parse(response.body)).to eq(JSON.parse({repositories: repositories.map { |c| c.to_hash }}.to_json))
-      end
+    it 'returns the list of names' do
+      expect(JSON.parse(response.body)).to eq(JSON.parse({repositories: repositories.map { |c| c.to_hash }}.to_json))
     end
   end
 
   describe 'process' do
     let(:repository) { FactoryGirl.build(:repository) }
 
-
-    context 'with and existent repository' do
+    context 'with a correct execution' do
       before :each do
-        KalibroGem::Entities::Repository.expects(:find).with(repository.id).returns(repository)
+        KalibroProcessor.expects(:request).with("repositories/#{repository.id}/process", {}, :get).returns({})
+        get :process_repository, id: repository.id, format: :json
       end
 
-      context 'json format' do
-        before :each do
-          repository.expects(:process).returns(true)
-          post :process_repository, id: repository.id, format: :json
-        end
-
-        it { is_expected.to respond_with(:success) }
-
-        it 'returns confirmation' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse({processing: repository.id}.to_json))
-        end
-      end
+      it { is_expected.to respond_with(:success) }
     end
   end
 
   describe 'cancel_process' do
     let(:repository) { FactoryGirl.build(:repository) }
 
-    context 'with and existent repository' do
+    context 'json format' do
       before :each do
-        KalibroGem::Entities::Repository.expects(:find).with(repository.id).returns(repository)
+        post :cancel_process, id: repository.id, format: :json
       end
 
-      context 'json format' do
-        before :each do
-          repository.expects(:cancel_process).returns(true)
-          post :cancel_process, id: repository.id, format: :json
-        end
-
-        it { is_expected.to respond_with(:success) }
-
-        it 'returns confirmation' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse({canceled_processing_for: repository.id}.to_json))
-        end
-      end
+      it { is_expected.to respond_with(:success) }
     end
   end
 
   describe 'supported_types' do
+    let!(:types) { {types: ["GIT"]} }
     before :each do
-      KalibroGem::Entities::Repository.expects(:repository_types).returns(['GIT'])
+      KalibroProcessor.expects(:request).with("repositories/types", {}, :get).returns(types)
 
       get :supported_types, format: :json
     end
@@ -160,7 +150,7 @@ describe RepositoriesController, :type => :controller do
     it { is_expected.to respond_with(:success) }
 
     it 'returns confirmation' do
-      expect(JSON.parse(response.body)).to eq(JSON.parse({supported_types: ["GIT"]}.to_json))
+      expect(JSON.parse(response.body)).to eq(JSON.parse(types.to_json))
     end
   end
 end
