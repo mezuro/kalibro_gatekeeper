@@ -1,6 +1,6 @@
 class ProcessingsController < ApplicationController
   def has
-    exists = {exists: KalibroGem::Entities::Processing.has_processing(params[:repository_id])}
+    exists = {exists: KalibroProcessor.request("repositories/#{params[:repository_id]}/has_processing", {}, :get)["has_processing"] }
 
     respond_to do |format|
       format.json { render json: exists }
@@ -8,7 +8,7 @@ class ProcessingsController < ApplicationController
   end
 
   def has_ready
-    exists = {exists: KalibroGem::Entities::Processing.has_ready_processing(params[:repository_id])}
+    exists = {exists: KalibroProcessor.request("repositories/#{params[:repository_id]}/has_ready_processing", {}, :get)["has_ready_processing"] }
 
     respond_to do |format|
       format.json { render json: exists }
@@ -16,7 +16,7 @@ class ProcessingsController < ApplicationController
   end
 
   def has_after
-    exists = {exists: KalibroGem::Entities::Processing.has_processing_after(params[:repository_id], params[:date])}
+    exists = {exists: KalibroProcessor.request("repositories/#{params[:repository_id]}/has_processing/after", {}, :get)["has_processing_in_time"] }
 
     respond_to do |format|
       format.json { render json: exists }
@@ -24,7 +24,7 @@ class ProcessingsController < ApplicationController
   end
 
   def has_before
-    exists = {exists: KalibroGem::Entities::Processing.has_processing_before(params[:repository_id], params[:date])}
+    exists = {exists: KalibroProcessor.request("repositories/#{params[:repository_id]}/has_processing/before", {}, :get)["has_processing_in_time"] }
 
     respond_to do |format|
       format.json { render json: exists }
@@ -32,7 +32,7 @@ class ProcessingsController < ApplicationController
   end
 
   def last_state_of
-    state = {state: KalibroGem::Entities::Processing.last_processing_state_of(params[:repository_id])}
+    state = KalibroProcessor.request("repositories/#{params[:repository_id]}/last_processing_state", {}, :get)
 
     respond_to do |format|
       format.json { render json: state }

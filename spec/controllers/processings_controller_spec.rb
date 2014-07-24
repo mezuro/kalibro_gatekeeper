@@ -5,7 +5,7 @@ describe ProcessingsController, :type => :controller do
     let!(:repository) { FactoryGirl.build(:repository) }
 
     before :each do
-      KalibroGem::Entities::Processing.expects(:has_processing).with(repository.id).returns(true)
+      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/has_processing", {}, :get).returns({"has_processing" => true})
     end
 
     context 'json format' do
@@ -25,7 +25,7 @@ describe ProcessingsController, :type => :controller do
     let!(:repository) { FactoryGirl.build(:repository) }
 
     before :each do
-      KalibroGem::Entities::Processing.expects(:has_ready_processing).with(repository.id).returns(true)
+      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/has_ready_processing", {}, :get).returns({"has_ready_processing" => true})
     end
 
     context 'json format' do
@@ -46,7 +46,7 @@ describe ProcessingsController, :type => :controller do
     let!(:repository) { FactoryGirl.build(:repository) }
 
     before :each do
-      KalibroGem::Entities::Processing.expects(:has_processing_after).with(repository.id, date).returns(true)
+      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/has_processing/after", {}, :get).returns({"has_processing_in_time" => true})
     end
 
     context 'json format' do
@@ -67,7 +67,7 @@ describe ProcessingsController, :type => :controller do
     let!(:repository) { FactoryGirl.build(:repository) }
 
     before :each do
-      KalibroGem::Entities::Processing.expects(:has_processing_before).with(repository.id, date).returns(true)
+      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/has_processing/before", {}, :get).returns({"has_processing_in_time" => true})
     end
 
     context 'json format' do
@@ -87,7 +87,7 @@ describe ProcessingsController, :type => :controller do
     let!(:repository) { FactoryGirl.build(:repository) }
 
     before :each do
-      KalibroGem::Entities::Processing.expects(:last_processing_state_of).with(repository.id).returns("READY")
+      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/last_processing_state", {}, :get).returns({"state" => "READY"})
     end
 
     context 'json format' do
