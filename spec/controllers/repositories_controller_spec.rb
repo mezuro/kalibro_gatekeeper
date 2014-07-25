@@ -1,21 +1,24 @@
 require 'rails_helper'
 
 describe RepositoriesController, :type => :controller do
-  pending describe 'save' do
+  describe 'save' do
     let(:params) { {'repository' => Hash[FactoryGirl.attributes_for(:repository, id: 0).map { |k,v| [k.to_s, v.to_s] }] } } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
     let!(:repository) { FactoryGirl.build(:repository, id: nil) }
 
     context 'when creating a repository' do
       context 'successfully saved' do
         before :each do
-          KalibroProcessor.expects(:request).with("repositories", params).returns(params)
+          expectation = {'repository' => params['repository'].clone}
+          expectation['repository']['scm_type'] = expectation['repository']['type']
+          expectation['repository'].delete('type')
+          expectation['repository']['period'] = expectation['repository']['process_period']
+          expectation['repository'].delete('process_period')
+          KalibroProcessor.expects(:request).with("repositories", expectation).returns(params)
         end
 
         context 'json format' do
           before :each do
-            call_params = params.clone
-            call_params[:format] = :json
-            post :save, call_params
+            post :save, 'repository' => params['repository'], format: :json
           end
 
           it { is_expected.to respond_with(:success) }
@@ -31,14 +34,17 @@ describe RepositoriesController, :type => :controller do
 
         before :each do
           return_params['repository']["errors"] = ["Error"]
-          KalibroProcessor.expects(:request).with("repositories", params).returns(return_params)
+          expectation = {'repository' => params['repository'].clone}
+          expectation['repository']['scm_type'] = expectation['repository']['type']
+          expectation['repository'].delete('type')
+          expectation['repository']['period'] = expectation['repository']['process_period']
+          expectation['repository'].delete('process_period')
+          KalibroProcessor.expects(:request).with("repositories", expectation).returns(return_params)
         end
 
         context 'json format' do
           before :each do
-            call_params = params.clone
-            call_params[:format] = :json
-            post :save, call_params
+            post :save, 'repository' => params['repository'], format: :json
           end
 
           it { is_expected.to respond_with(:unprocessable_entity) }
@@ -60,15 +66,11 @@ describe RepositoriesController, :type => :controller do
 
       context 'with valid params' do
         before :each do
-                      puts params_update.object_id.inspect
-
-          expectation = params_update.clone
-                      puts expectation.object_id.inspect
+          expectation = {'repository' => params_update['repository'].clone}
           expectation['repository']['scm_type'] = expectation['repository']['type']
           expectation['repository'].delete('type')
           expectation['repository']['period'] = expectation['repository']['process_period']
           expectation['repository'].delete('process_period')
-
           KalibroProcessor.expects(:request).with("repositories/#{expectation['repository']['id']}", expectation, :put).returns(params_update)
         end
 

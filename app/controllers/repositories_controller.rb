@@ -1,10 +1,9 @@
 class RepositoriesController < ApplicationController
   def save
-    puts params['repository'].inspect
     params['repository']['scm_type'] = params['repository']['type']
     params['repository'].delete('type')
     params['repository']['period'] = params['repository']['process_period']
-    params['repository']['process_period']
+    params['repository'].delete('process_period')
     if !params['repository']['id'].nil? && params['repository']['id'].to_i != 0 && KalibroProcessor.request("repositories/#{params['repository']['id']}", {}, :get)["error"].nil?
       response = KalibroProcessor.request("repositories/#{params['repository']['id']}", {'repository' => params['repository']}, :put)
     else
