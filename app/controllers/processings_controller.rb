@@ -32,7 +32,7 @@ class ProcessingsController < ApplicationController
   end
 
   def last_state_of
-    state = KalibroProcessor.request("repositories/#{params[:repository_id]}/last_processing_state", {}, :get)
+    state = {'state' => KalibroProcessor.request("repositories/#{params[:repository_id]}/last_processing_state", {}, :get)["processing_state"]}
 
     respond_to do |format|
       format.json { render json: state }
