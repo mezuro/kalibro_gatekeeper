@@ -87,7 +87,7 @@ describe ProcessingsController, :type => :controller do
     let!(:repository) { FactoryGirl.build(:repository) }
 
     before :each do
-      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/last_processing_state", {}, :get).returns({"state" => "READY"})
+      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/last_processing_state", {}, :get).returns({"processing_state" => "READY"})
     end
 
     context 'json format' do
