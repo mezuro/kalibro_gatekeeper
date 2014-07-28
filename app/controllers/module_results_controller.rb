@@ -24,7 +24,8 @@ class ModuleResultsController < ApplicationController
   end
 
   def history_of
-    date_module_results = {date_module_results: KalibroGem::Entities::ModuleResult.history_of(params[:id]).map { |date_module_result| date_module_result.to_hash }}
+    repository_id = KalibroProcessor.request("module_results/#{params[:id]}/repository_id", {}, :get)['repository_id']
+    date_module_results = {date_module_results: KalibroProcessor.request("repositories/#{repository_id}/module_result_history_of", {}, :get)}
 
     respond_to do |format|
       format.json { render json: date_module_results }

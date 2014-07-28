@@ -89,22 +89,26 @@ describe ModuleResultsController, :type => :controller do
     end
   end
   describe 'history_of' do
+    let!(:repository) { FactoryGirl.build(:repository) }
     let!(:module_result) { FactoryGirl.build(:module_result) }
-    let!(:date_module_results) { [FactoryGirl.build(:date_module_result)] }
+    let!(:date_module_results) { [FactoryGirl.build(:date_module_result, module_result: module_result)] }
 
-    before :each do
-      KalibroGem::Entities::ModuleResult.expects(:history_of).with(module_result.id).returns(date_module_results)
-    end
-
-    context 'json format' do
+    context 'returning results' do
       before :each do
-        post :history_of, id: module_result.id, format: :json
+        KalibroProcessor.expects(:request).with("module_results/#{module_result.id}/repository_id", {}, :get).returns({'repository_id' => repository.id})
+        KalibroProcessor.expects(:request).with("repositories/#{repository.id}/module_result_history_of", {}, :get).returns(date_module_results)
       end
 
-      it { is_expected.to respond_with(:success) }
+      context 'json format' do
+        before :each do
+          post :history_of, id: module_result.id, format: :json
+        end
 
-      it 'returns the list of date_metric_results' do
-        expect(JSON.parse(response.body)).to eq(JSON.parse({date_module_results: date_module_results.map { |date_module_result| date_module_result.to_hash }}.to_json))
+        it { is_expected.to respond_with(:success) }
+
+        it 'returns the list of date_metric_results' do
+          expect(JSON.parse(response.body)).to eq(JSON.parse({date_module_results: date_module_results.map{|c| c.to_hash}}.to_json))
+        end
       end
     end
   end
