@@ -1,6 +1,9 @@
 class ModuleResultsController < ApplicationController
   def get
     module_result = KalibroProcessor.request("module_results/#{params[:id]}/get", {}, :get)
+    module_result.delete("created_at")
+    module_result.delete("updated_at")
+    module_result.delete("processing_id")
 
     respond_to do |format|
       if module_result["error"].nil?
@@ -13,6 +16,12 @@ class ModuleResultsController < ApplicationController
 
   def children_of
     children = KalibroProcessor.request("module_results/#{params[:id]}/children", {}, :get)
+    p children
+    children.each do |children|
+      children.delete("created_at")
+      children.delete("updated_at")
+      children.delete("processing_id")
+    end
 
     respond_to do |format|
       if children.is_a?(Array) #Processor returns an array of children when sucessful and an error hash when it fails.
