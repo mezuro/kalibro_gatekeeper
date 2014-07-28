@@ -40,8 +40,12 @@ class ProcessingsController < ApplicationController
   end
 
   def last_ready_of
-    processing = {processing: KalibroGem::Entities::Processing.last_ready_processing_of(params[:repository_id]).to_hash}
-
+    processing = {processing: KalibroProcessor.request("repositories/#{params[:repository_id]}/last_ready_processing", {}, :get)["last_ready_processing"]}
+    processing[:processing].delete('process_time_id')
+    processing[:processing].delete('repository_id')
+    processing[:processing].delete('created_at')
+    processing[:processing]['date'] = processing[:processing].delete('updated_at')
+    processing[:processing]['results_root_id'] = processing[:processing].delete('root_module_result_id')
     respond_to do |format|
       format.json { render json: processing }
     end
