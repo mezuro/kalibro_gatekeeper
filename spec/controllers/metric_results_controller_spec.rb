@@ -48,7 +48,7 @@ describe MetricResultsController, :type => :controller do
     let!(:metric_result) { FactoryGirl.build(:metric_result) }
 
     before :each do
-      KalibroProcessor.expects(:request).with("module_results/#{module_result.id}/metric_results", {}, :get).returns({metric_results: metric_result})
+      KalibroProcessor.expects(:request).with("module_results/#{module_result.id}/metric_results", {}, :get).returns([metric_result.to_hash])
     end
 
     context 'json format' do
@@ -59,7 +59,7 @@ describe MetricResultsController, :type => :controller do
       it { is_expected.to respond_with(:success) }
 
       it 'returns the list of names' do
-        expect(JSON.parse(response.body)).to eq(JSON.parse({metric_results: metric_result}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({metric_results: [metric_result]}.to_json))
       end
     end
   end

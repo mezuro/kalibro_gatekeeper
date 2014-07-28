@@ -19,8 +19,15 @@ class MetricResultsController < ApplicationController
   def of
     metric_results = KalibroProcessor.request("module_results/#{params[:module_result_id]}/metric_results", {}, :get)
 
+    metric_results.each do |metric_result|
+      metric_result.delete('created_at')
+      metric_result.delete('updated_at')
+      metric_result.delete('module_result_id')
+      metric_result.delete('metric_configuration_id')
+    end
+
     respond_to do |format|
-      format.json { render json: metric_results }
+      format.json { render json: {metric_results: metric_results} }
     end
   end
 end
