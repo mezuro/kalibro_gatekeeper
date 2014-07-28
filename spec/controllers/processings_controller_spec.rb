@@ -189,12 +189,12 @@ describe ProcessingsController, :type => :controller do
   end
 
   describe 'last_before_of' do
-    let!(:processing) { FactoryGirl.build(:processing) }
+    let!(:processing) { Hash[FactoryGirl.attributes_for(:processing, id: 0).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
     let!(:repository) { FactoryGirl.build(:repository) }
     let!(:date) {"21/12/1995"} # Ruby's first publication
 
     before :each do
-      KalibroGem::Entities::Processing.expects(:last_processing_before).with(repository.id, date).returns(processing)
+      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/last_processing/before", {"date" => date}).returns({"processing" => processing})
     end
 
     context 'json format' do
@@ -205,7 +205,7 @@ describe ProcessingsController, :type => :controller do
       it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        expect(JSON.parse(response.body)).to eq(JSON.parse({processing: processing.to_hash}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({"processing" => processing}.to_json))
       end
     end
   end

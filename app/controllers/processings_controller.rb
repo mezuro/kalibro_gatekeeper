@@ -72,10 +72,10 @@ class ProcessingsController < ApplicationController
   end
 
   def last_before_of
-    processing = {processing: KalibroGem::Entities::Processing.last_processing_before(params[:repository_id], params[:date]).to_hash}
+    processing_hash = KalibroProcessor.request("repositories/#{params[:repository_id]}/last_processing/before", {"date" => params[:date]})
 
     respond_to do |format|
-      format.json { render json: processing }
+      format.json { render json: fix_processing_params(processing_hash) }
     end
   end
 
