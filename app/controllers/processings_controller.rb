@@ -64,10 +64,10 @@ class ProcessingsController < ApplicationController
   end
 
   def first_after_of
-    processing = {processing: KalibroGem::Entities::Processing.first_processing_after(params[:repository_id], params[:date]).to_hash}
+    processing_hash = KalibroProcessor.request("repositories/#{params[:repository_id]}/first_processing/after", {"date" => params[:date]})
 
     respond_to do |format|
-      format.json { render json: processing }
+      format.json { render json: fix_processing_params(processing_hash) }
     end
   end
 
