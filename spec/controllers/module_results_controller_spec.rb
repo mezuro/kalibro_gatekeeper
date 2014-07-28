@@ -96,7 +96,7 @@ describe ModuleResultsController, :type => :controller do
     context 'returning results' do
       before :each do
         KalibroProcessor.expects(:request).with("module_results/#{module_result.id}/repository_id", {}, :get).returns({'repository_id' => repository.id})
-        KalibroProcessor.expects(:request).with("repositories/#{repository.id}/module_result_history_of", {}, :get).returns(date_module_results)
+        KalibroProcessor.expects(:request).with("repositories/#{repository.id}/module_result_history_of", {module_id: module_result.id}).returns('module_result_history_of' => date_module_results)
       end
 
       context 'json format' do

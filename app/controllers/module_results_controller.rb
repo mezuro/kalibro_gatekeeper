@@ -16,7 +16,7 @@ class ModuleResultsController < ApplicationController
 
   def children_of
     children = KalibroProcessor.request("module_results/#{params[:id]}/children", {}, :get)
-    p children
+
     children.each do |children|
       children.delete("created_at")
       children.delete("updated_at")
@@ -34,7 +34,7 @@ class ModuleResultsController < ApplicationController
 
   def history_of
     repository_id = KalibroProcessor.request("module_results/#{params[:id]}/repository_id", {}, :get)['repository_id']
-    date_module_results = {date_module_results: KalibroProcessor.request("repositories/#{repository_id}/module_result_history_of", {}, :get)}
+    date_module_results = {date_module_results: KalibroProcessor.request("repositories/#{repository_id}/module_result_history_of", {module_id: params[:id]})['module_result_history_of']}
 
     respond_to do |format|
       format.json { render json: date_module_results }
