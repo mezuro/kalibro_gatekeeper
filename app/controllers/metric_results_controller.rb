@@ -20,6 +20,7 @@ class MetricResultsController < ApplicationController
     metric_results = KalibroProcessor.request("module_results/#{params[:module_result_id]}/metric_results", {}, :get)
 
     metric_results.each do |metric_result|
+      add_snapshot(metric_result)
       metric_result.delete('created_at')
       metric_result.delete('updated_at')
       metric_result.delete('module_result_id')
@@ -29,5 +30,23 @@ class MetricResultsController < ApplicationController
     respond_to do |format|
       format.json { render json: {metric_results: metric_results} }
     end
+  end
+
+  private
+
+  def add_snapshot(metric_result_hash)
+    metric_configuration = KalibroGem::Entities::MetricConfiguration.find(metric_result_hash['metric_configuration_id'].to_i)
+    ranges = KalibroGem::Entities::Range.ranges_of(metric_result_hash['metric_configuration_id'].to_i)
+
+    range_snapshots = ranges.map do |range|
+      reading = KalibroGem::Entities::Reading.find(range.reading_id)
+      KalibroGem::Entities::RangeSnapshot.new(beginning: range.beginning, end: range.end, label: reading.label,
+                                              grade: reading.grade, color: reading.color, comments: range.comments)
+    end
+
+    metric_result_hash["configuration"] = KalibroGem::Entities::MetricConfigurationSnapshot.
+                                            new(range: range_snapshots, code: metric_configuration.code,
+                                                weight: metric_configuration.weight, aggregation_form: metric_configuration.aggregation_form,
+                                                metric: metric_configuration.metric, base_tool_name: metric_configuration.base_tool_name)
   end
 end

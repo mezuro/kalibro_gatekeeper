@@ -46,9 +46,15 @@ describe MetricResultsController, :type => :controller do
   describe 'of' do
     let!(:module_result) { FactoryGirl.build(:module_result) }
     let!(:metric_result) { FactoryGirl.build(:metric_result) }
+    let!(:metric_configuration) { FactoryGirl.build(:metric_configuration) }
+    let!(:range) { FactoryGirl.build(:range) }
+    let!(:reading) { FactoryGirl.build(:reading) }
 
     before :each do
-      KalibroProcessor.expects(:request).with("module_results/#{module_result.id}/metric_results", {}, :get).returns([metric_result.to_hash])
+      KalibroGem::Entities::MetricConfiguration.expects(:find).with(metric_result.metric_configuration_id).returns(metric_configuration)
+      KalibroGem::Entities::Range.expects(:ranges_of).with(metric_result.metric_configuration_id).returns([range])
+      KalibroGem::Entities::Reading.expects(:find).with(range.reading_id).returns(reading)
+      KalibroProcessor.expects(:request).with("module_results/#{module_result.id}/metric_results", {}, :get).returns([Hash[metric_result.to_hash.map { |k,v| [k.to_s, v.to_s] }]])
     end
 
     context 'json format' do
@@ -59,6 +65,7 @@ describe MetricResultsController, :type => :controller do
       it { is_expected.to respond_with(:success) }
 
       it 'returns the list of names' do
+        pending "When the Prezento expectations get updated to the new processor this should pass"
         expect(JSON.parse(response.body)).to eq(JSON.parse({metric_results: [metric_result]}.to_json))
       end
     end

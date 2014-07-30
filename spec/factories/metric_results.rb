@@ -1,5 +1,5 @@
-# This file is part of KalibroGem
-# Copyright (C) 2013  it's respectives authors (please see the AUTHORS file)
+# This file is part of KalibroGatekeeper
+# Copyright (C) 2014  it's respectives authors (please see the AUTHORS file)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,11 +14,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+class MetricResult < KalibroGem::Entities::Model
+  attr_accessor :id, :value, :metric, :metric_configuration_id
+end
+
 FactoryGirl.define do
-  factory :metric_result, class: KalibroGem::Entities::MetricResult do
+  factory :metric_result, class: MetricResult do
     id  "42"
-    self.configuration { FactoryGirl.build(:metric_configuration_snapshot) }
     value "10.0"
-    aggregated_value "21"
+    metric { FactoryGirl.build(:metric) }
+    metric_configuration_id 13
   end
 end
