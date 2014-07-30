@@ -16,7 +16,7 @@ class ProcessingsController < ApplicationController
   end
 
   def has_after
-    exists = {exists: KalibroProcessor.request("repositories/#{params[:repository_id]}/has_processing/after", {}, :get)["has_processing_in_time"] }
+    exists = {exists: KalibroProcessor.request("repositories/#{params[:repository_id]}/has_processing/after", {"date" => params[:date]})["has_processing_in_time"] }
 
     respond_to do |format|
       format.json { render json: exists }
@@ -24,7 +24,7 @@ class ProcessingsController < ApplicationController
   end
 
   def has_before
-    exists = {exists: KalibroProcessor.request("repositories/#{params[:repository_id]}/has_processing/before", {}, :get)["has_processing_in_time"] }
+    exists = {exists: KalibroProcessor.request("repositories/#{params[:repository_id]}/has_processing/before", {"date" => params[:date]})["has_processing_in_time"] }
 
     respond_to do |format|
       format.json { render json: exists }

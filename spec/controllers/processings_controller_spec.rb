@@ -46,7 +46,7 @@ describe ProcessingsController, :type => :controller do
     let!(:repository) { FactoryGirl.build(:repository) }
 
     before :each do
-      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/has_processing/after", {}, :get).returns({"has_processing_in_time" => true})
+      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/has_processing/after", {'date' => date}).returns({"has_processing_in_time" => true})
     end
 
     context 'json format' do
@@ -67,7 +67,7 @@ describe ProcessingsController, :type => :controller do
     let!(:repository) { FactoryGirl.build(:repository) }
 
     before :each do
-      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/has_processing/before", {}, :get).returns({"has_processing_in_time" => true})
+      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/has_processing/before", {'date' => date}).returns({"has_processing_in_time" => true})
     end
 
     context 'json format' do
