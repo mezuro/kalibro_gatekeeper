@@ -104,11 +104,14 @@ describe ProcessingsController, :type => :controller do
   end
 
   describe 'last_ready_of' do
-    let(:processing) { Hash[FactoryGirl.attributes_for(:processing, id: 0).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
+    let!(:processing_hash) { Hash[FactoryGirl.attributes_for(:processing, id: 0).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
+    let!(:process_time_hash) { Hash[FactoryGirl.attributes_for(:process_time).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
     let!(:repository) { FactoryGirl.build(:repository) }
+    let!(:processing) { FactoryGirl.build(:processing, id: 0) }
 
     before :each do
-      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/last_ready_processing", {}, :get).returns({"last_ready_processing" => processing})
+      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/last_ready_processing", {}, :get).returns({"last_ready_processing" => processing_hash})
+      KalibroProcessor.expects(:request).with("processings/#{processing.id}/process_times", {}, :get).returns({"process_times" => [process_time_hash]})
     end
 
     context 'json format' do
@@ -119,17 +122,20 @@ describe ProcessingsController, :type => :controller do
       it { is_expected.to respond_with(:success) }
 
       it 'returns the last ready processing of the repository' do
-        expect(JSON.parse(response.body)).to eq(JSON.parse({"processing" => processing}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({"processing" => processing_hash}.to_json))
       end
     end
   end
 
   describe 'last_of' do
-    let(:processing) { Hash[FactoryGirl.attributes_for(:processing, id: 0).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
+    let!(:processing_hash) { Hash[FactoryGirl.attributes_for(:processing, id: 0).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
+    let!(:process_time_hash) { Hash[FactoryGirl.attributes_for(:process_time).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
     let!(:repository) { FactoryGirl.build(:repository) }
+    let!(:processing) { FactoryGirl.build(:processing, id: 0) }
 
     before :each do
-      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/last_processing", {}).returns({"processing" => processing})
+      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/last_processing", {}).returns({"processing" => processing_hash})
+      KalibroProcessor.expects(:request).with("processings/#{processing.id}/process_times", {}, :get).returns({"process_times" => [process_time_hash]})
     end
 
     context 'json format' do
@@ -140,17 +146,20 @@ describe ProcessingsController, :type => :controller do
       it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        expect(JSON.parse(response.body)).to eq(JSON.parse({"processing" => processing}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({"processing" => processing_hash}.to_json))
       end
     end
   end
 
   describe 'first_of' do
-    let!(:processing) { Hash[FactoryGirl.attributes_for(:processing, id: 0).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
+    let!(:processing_hash) { Hash[FactoryGirl.attributes_for(:processing, id: 0).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
+    let!(:process_time_hash) { Hash[FactoryGirl.attributes_for(:process_time).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
     let!(:repository) { FactoryGirl.build(:repository) }
+    let!(:processing) { FactoryGirl.build(:processing, id: 0) }
 
     before :each do
-      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/first_processing", {}).returns({"processing" => processing})
+      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/first_processing", {}).returns({"processing" => processing_hash})
+      KalibroProcessor.expects(:request).with("processings/#{processing.id}/process_times", {}, :get).returns({"process_times" => [process_time_hash]})
     end
 
     context 'json format' do
@@ -161,18 +170,21 @@ describe ProcessingsController, :type => :controller do
       it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        expect(JSON.parse(response.body)).to eq(JSON.parse({"processing" => processing}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({"processing" => processing_hash}.to_json))
       end
     end
   end
 
   describe 'first_after_of' do
-    let!(:processing) { Hash[FactoryGirl.attributes_for(:processing, id: 0).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
+    let!(:processing_hash) { Hash[FactoryGirl.attributes_for(:processing, id: 0).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
+    let!(:process_time_hash) { Hash[FactoryGirl.attributes_for(:process_time).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
     let!(:repository) { FactoryGirl.build(:repository) }
+    let!(:processing) { FactoryGirl.build(:processing, id: 0) }
     let!(:date) {"21/12/1995"} # Ruby's first publication
 
     before :each do
-      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/first_processing/after", {"date" => date}).returns({"processing" => processing})
+      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/first_processing/after", {"date" => date}).returns({"processing" => processing_hash})
+      KalibroProcessor.expects(:request).with("processings/#{processing.id}/process_times", {}, :get).returns({"process_times" => [process_time_hash]})
     end
 
     context 'json format' do
@@ -183,18 +195,21 @@ describe ProcessingsController, :type => :controller do
       it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        expect(JSON.parse(response.body)).to eq(JSON.parse({"processing" => processing}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({"processing" => processing_hash}.to_json))
       end
     end
   end
 
   describe 'last_before_of' do
-    let!(:processing) { Hash[FactoryGirl.attributes_for(:processing, id: 0).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
+    let!(:processing_hash) { Hash[FactoryGirl.attributes_for(:processing, id: 0).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
+    let!(:process_time_hash) { Hash[FactoryGirl.attributes_for(:process_time).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
     let!(:repository) { FactoryGirl.build(:repository) }
+    let!(:processing) { FactoryGirl.build(:processing, id: 0) }
     let!(:date) {"21/12/1995"} # Ruby's first publication
 
     before :each do
-      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/last_processing/before", {"date" => date}).returns({"processing" => processing})
+      KalibroProcessor.expects(:request).with("repositories/#{repository.id}/last_processing/before", {"date" => date}).returns({"processing" => processing_hash})
+      KalibroProcessor.expects(:request).with("processings/#{processing.id}/process_times", {}, :get).returns({"process_times" => [process_time_hash]})
     end
 
     context 'json format' do
@@ -205,7 +220,7 @@ describe ProcessingsController, :type => :controller do
       it { is_expected.to respond_with(:success) }
 
       it 'returns the list of date_metric_results' do
-        expect(JSON.parse(response.body)).to eq(JSON.parse({"processing" => processing}.to_json))
+        expect(JSON.parse(response.body)).to eq(JSON.parse({"processing" => processing_hash}.to_json))
       end
     end
   end

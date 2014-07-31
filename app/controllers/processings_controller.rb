@@ -40,53 +40,75 @@ class ProcessingsController < ApplicationController
   end
 
   def last_ready_of
-    processing = {"processing" => KalibroProcessor.request("repositories/#{params[:repository_id]}/last_ready_processing", {}, :get)["last_ready_processing"]}
+    processing_hash = {"processing" => KalibroProcessor.request("repositories/#{params[:repository_id]}/last_ready_processing", {}, :get)["last_ready_processing"]}
+    processing_id = processing_hash["processing"]["id"].to_i
+    process_times = KalibroProcessor.request("processings/#{processing_id}/process_times", {}, :get)["process_times"]
 
     respond_to do |format|
-      format.json { render json: fix_processing_params(processing) }
+      format.json { render json: fix_processing_params(processing_hash, process_times) }
     end
   end
 
   def last_of
     processing_hash = KalibroProcessor.request("repositories/#{params[:repository_id]}/last_processing", {})
+    processing_id = processing_hash["processing"]["id"].to_i
+    process_times = KalibroProcessor.request("processings/#{processing_id}/process_times", {}, :get)["process_times"]
 
     respond_to do |format|
-      format.json { render json: fix_processing_params(processing_hash) }
+      format.json { render json: fix_processing_params(processing_hash, process_times) }
     end
   end
 
   def first_of
     processing_hash = KalibroProcessor.request("repositories/#{params[:repository_id]}/first_processing", {})
+    processing_id = processing_hash["processing"]["id"].to_i
+    process_times = KalibroProcessor.request("processings/#{processing_id}/process_times", {}, :get)["process_times"]
 
     respond_to do |format|
-      format.json { render json: fix_processing_params(processing_hash) }
+      format.json { render json: fix_processing_params(processing_hash, process_times) }
     end
   end
 
   def first_after_of
     processing_hash = KalibroProcessor.request("repositories/#{params[:repository_id]}/first_processing/after", {"date" => params[:date]})
+    processing_id = processing_hash["processing"]["id"].to_i
+    process_times = KalibroProcessor.request("processings/#{processing_id}/process_times", {}, :get)["process_times"]
 
     respond_to do |format|
-      format.json { render json: fix_processing_params(processing_hash) }
+      format.json { render json: fix_processing_params(processing_hash, process_times) }
     end
   end
 
   def last_before_of
     processing_hash = KalibroProcessor.request("repositories/#{params[:repository_id]}/last_processing/before", {"date" => params[:date]})
+    processing_id = processing_hash["processing"]["id"].to_i
+    process_times = KalibroProcessor.request("processings/#{processing_id}/process_times", {}, :get)["process_times"]
 
     respond_to do |format|
-      format.json { render json: fix_processing_params(processing_hash) }
+      format.json { render json: fix_processing_params(processing_hash, process_times) }
     end
   end
 
   private
 
-  def fix_processing_params(processing)
+  def fix_process_times(process_times)
+    process_times.each do |process_time|
+      process_time.delete("created_at")
+      process_time.delete("updated_at")
+    end
+    process_times
+  end
+
+  def fix_processing_params(processing, process_times)
     processing["processing"].delete('process_time_id')
     processing["processing"].delete('repository_id')
     processing["processing"].delete('created_at')
     processing["processing"]['date'] = processing["processing"].delete('updated_at')
     processing["processing"]['results_root_id'] = processing["processing"].delete('root_module_result_id')
+
+    process_times = fix_process_times(process_times)
+    processing["processing"]["process_times"] = process_times
+
     processing
   end
 end
