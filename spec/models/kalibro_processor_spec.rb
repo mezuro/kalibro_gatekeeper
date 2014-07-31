@@ -7,11 +7,18 @@ describe KalibroProcessor, :type => :model do
     describe 'request' do
       let(:client) { mock('client') }
       let(:response) { mock('response') }
+      let(:request) { mock('request') }
+      let(:options) { mock('options') }
 
       it 'is expected to call the client post' do
+        options.expects(:timeout=)
+        options.expects(:open_timeout=)
+        request.expects(:url).with('/kalibro_processor/exists')
+        request.expects(:body=).with({id: 1})
+        request.expects(:options).twice.returns(options)
         response.expects(:body).returns({exists: false})
         client.expects(:post).
-          with('/kalibro_processor/exists', {id: 1}).
+          yields(request).
           returns(response)
         KalibroProcessor.expects(:client).returns(client)
         expect(KalibroProcessor.
