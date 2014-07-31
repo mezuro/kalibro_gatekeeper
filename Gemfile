@@ -60,6 +60,11 @@ group :development, :test do
   gem 'capistrano-rvm', "~>0.1.0"
 end
 
+group :local do
+  # Enables the app to handle multiple paralell requests on local environment
+  gem 'puma', '~> 2.9.0'
+end
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
