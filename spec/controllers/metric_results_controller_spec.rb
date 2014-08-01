@@ -2,6 +2,8 @@ require 'rails_helper'
 
 describe MetricResultsController, :type => :controller do
   describe 'history_of_metric' do
+    let!(:module_result_params) { Hash[FactoryGirl.attributes_for(:module_result, id: 0).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
+    let!(:kalibro_module_params) { Hash[FactoryGirl.attributes_for(:module).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with sybols and integers
     let!(:repository) { FactoryGirl.build(:repository) }
     let!(:metric_result) { FactoryGirl.build(:metric_result) }
     let!(:module_result) { FactoryGirl.build(:module_result) }
@@ -11,8 +13,13 @@ describe MetricResultsController, :type => :controller do
     before :each do
       KalibroProcessor.expects(:request).with("module_results/#{module_result.id.to_i}/repository_id", {}, :get).
         returns({"repository_id" => repository.id})
+      kalibro_module_params["id"] = "1"
+      module_result_params["kalibro_module"] = kalibro_module_params
+      module_result_params.delete("module")
+      KalibroProcessor.expects(:request).with("module_results/#{module_result.id.to_i}/get", {}, :get).
+        returns(module_result_params)
       KalibroProcessor.expects(:request).
-        with("repositories/#{repository.id}/metric_result_history_of", {module_id: module_result.id.to_i , metric_name: metric_result.metric.name}).
+        with("repositories/#{repository.id}/metric_result_history_of", {module_id: kalibro_module_params["id"], metric_name: metric_result.metric.name}).
         returns({"metric_result_history_of" => date_metric_results})
     end
 
