@@ -27,7 +27,7 @@ describe MetricResultsController, :type => :controller do
     let!(:metric_result) { FactoryGirl.build(:metric_result) }
 
     before :each do
-      KalibroProcessor.expects(:request).with("metric_results/#{metric_result.id}/descendant_values", {}, :get).returns({descendant_results: metric_result.value})
+      KalibroProcessor.expects(:request).with("metric_results/#{metric_result.id}/descendant_values", {}, :get).returns({"descendant_values" => metric_result.value})
     end
 
     context 'json format' do
