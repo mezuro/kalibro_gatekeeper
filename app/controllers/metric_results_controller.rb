@@ -4,6 +4,8 @@ class MetricResultsController < ApplicationController
     module_id = KalibroProcessor.request("module_results/#{params[:module_result_id]}/get", {}, :get)["kalibro_module"]["id"]
     history_of_metric = KalibroProcessor.request("repositories/#{repository_id}/metric_result_history_of", {module_id: module_id, metric_name: params[:metric_name]})["metric_result_history_of"]
 
+    history_of_metric.map! { |date_value| KalibroGem::Entities::DateMetricResult.new(date: date_value[0], metric_result: {value: date_value[1]})}
+
     respond_to do |format|
       format.json { render json: {date_metric_results: history_of_metric} }
     end
