@@ -2,7 +2,8 @@ class MetricResultsController < ApplicationController
   def history_of_metric
     repository_id = KalibroProcessor.request("module_results/#{params[:module_result_id]}/repository_id", {}, :get)["repository_id"]
     module_id = KalibroProcessor.request("module_results/#{params[:module_result_id]}/get", {}, :get)["kalibro_module"]["id"]
-    history_of_metric = KalibroProcessor.request("repositories/#{module_id}/metric_result_history_of", {module_id: module_id, metric_name: params[:metric_name]})["metric_result_history_of"]
+    history_of_metric = KalibroProcessor.request("repositories/#{repository_id}/metric_result_history_of", {module_id: module_id, metric_name: params[:metric_name]})["metric_result_history_of"]
+
     respond_to do |format|
       format.json { render json: {date_metric_results: history_of_metric} }
     end
