@@ -13,6 +13,7 @@ class MetricResultsController < ApplicationController
 
   def descendant_results_of
     descendant_results = KalibroProcessor.request("metric_results/#{params[:id]}/descendant_values", {}, :get)["descendant_values"]
+
     respond_to do |format|
       format.json { render json: { descendant_results: descendant_results } }
     end

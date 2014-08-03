@@ -7,7 +7,7 @@ describe ModuleResultsController, :type => :controller do
 
     context 'with and existent module_result' do
       before :each do
-        module_result_hash["module"] = module_hash
+        module_result_hash["kalibro_module"] = module_hash
         KalibroProcessor.expects(:request).with("module_results/#{module_result_hash["id"]}/get", {}, :get).returns(module_result_hash)
       end
 
@@ -50,7 +50,7 @@ describe ModuleResultsController, :type => :controller do
 
     context 'with and existent module_result' do
       before :each do
-        module_result_hash["module"] = module_hash
+        module_result_hash["kalibro_module"] = module_hash
         children << module_result_hash
         children << module_result_hash
         KalibroProcessor.expects(:request).with("module_results/#{module_result_hash["id"]}/children", {}, :get).returns(children)

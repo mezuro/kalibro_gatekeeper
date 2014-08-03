@@ -1,9 +1,8 @@
 class ModuleResultsController < ApplicationController
   def get
     module_result = KalibroProcessor.request("module_results/#{params[:id]}/get", {}, :get)
-    module_result.delete("created_at")
-    module_result.delete("updated_at")
-    module_result.delete("processing_id")
+
+    format_module_result(module_result) if module_result["error"].nil?
 
     respond_to do |format|
       if module_result["error"].nil?
@@ -17,11 +16,7 @@ class ModuleResultsController < ApplicationController
   def children_of
     children = KalibroProcessor.request("module_results/#{params[:id]}/children", {}, :get)
 
-    children.each do |children|
-      children.delete("created_at")
-      children.delete("updated_at")
-      children.delete("processing_id")
-    end
+    children.each { |child| format_module_result(child) } if children.is_a?(Array)
 
     respond_to do |format|
       if children.is_a?(Array) #Processor returns an array of children when sucessful and an error hash when it fails.
@@ -39,5 +34,27 @@ class ModuleResultsController < ApplicationController
     respond_to do |format|
       format.json { render json: date_module_results }
     end
+  end
+
+  private
+
+  def format_module_result(module_result)
+    unless module_result["kalibro_module"].nil?
+      module_result["kalibro_module"].delete("id")
+      module_result["kalibro_module"].delete("created_at")
+      module_result["kalibro_module"].delete("updated_at")
+      module_result["kalibro_module"].delete("module_result_id")
+      module_result["kalibro_module"]["name"] = module_result["kalibro_module"]["long_name"]
+      module_result["kalibro_module"].delete("long_name")
+      module_result["kalibro_module"]["granularity"] = module_result["kalibro_module"]["granlrty"]
+      module_result["kalibro_module"].delete("granlrty")
+
+      module_result["module"] = module_result["kalibro_module"]
+      module_result.delete("kalibro_module")
+    end
+
+    module_result.delete("created_at")
+    module_result.delete("updated_at")
+    module_result.delete("processing_id")
   end
 end
