@@ -6,7 +6,10 @@
     Copyright 2014
     --------------
 
+    Alessandro Palmeira (alessandro.palmeira at gmail.com)
+    Diego Araújo (diegoamc90 at gmail.com)
     Rafael Reggiani Manzo (rr.manzo at gmail.com)
+    Renan Fichberg (rfichberg at gmail.com)
 
 # THANKSs
 
