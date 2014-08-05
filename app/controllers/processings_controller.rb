@@ -92,11 +92,9 @@ class ProcessingsController < ApplicationController
   private
 
   def fix_process_times(process_times)
-    process_times.each do |process_time|
-      process_time.delete("created_at")
-      process_time.delete("updated_at")
+    process_times.map do |process_time|
+      KalibroGem::Entities::ProcessTime.new(state: process_time["state"], time: process_time['time'])
     end
-    process_times
   end
 
   def fix_processing_params(processing, process_times)
@@ -106,8 +104,7 @@ class ProcessingsController < ApplicationController
     processing["processing"]['date'] = processing["processing"].delete('updated_at')
     processing["processing"]['results_root_id'] = processing["processing"].delete('root_module_result_id')
 
-    process_times = fix_process_times(process_times)
-    processing["processing"]["process_times"] = process_times
+    processing["processing"]["process_time"] = fix_process_times(process_times)
 
     processing
   end
