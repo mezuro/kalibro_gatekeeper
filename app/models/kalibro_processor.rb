@@ -3,7 +3,7 @@ class KalibroProcessor
   def self.request(path, params = {}, method = :post)
     response = client.send(method) do |request|
       request.url "/#{path}"
-      request.body = params
+      request.body = params unless params.empty?
       request.options.timeout = 300
       request.options.open_timeout = 300
     end
