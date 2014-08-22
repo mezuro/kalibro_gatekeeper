@@ -1,8 +1,14 @@
 class MetricConfigurationsController < ApplicationController
   def save
+    params[:metric_configuration][:metric].delete(:code)
     metric_configuration = KalibroGem::Entities::MetricConfiguration.new(params[:metric_configuration])
     metric_configuration.configuration_id = params[:configuration_id]
     metric_configuration.id = nil
+
+    #Sending this garbage just because KalibroJava is waiting Prezento to send an aggregation form
+    if metric_configuration.metric.compound == "true"
+      metric_configuration.aggregation_form = "AVERAGE"
+    end
 
     respond_to do |format|
       if metric_configuration.save
