@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe MetricConfigurationsController, :type => :controller do
   describe 'save' do
-    let(:metric_configuration) { FactoryGirl.build(:metric_configuration, id: nil) }
+    let(:metric_configuration) { FactoryGirl.build(:metric_configuration, id: 0) }
     let(:metric_configuration_params) { metric_configuration.to_hash }
 
     context 'successfully saved' do
@@ -19,6 +19,7 @@ describe MetricConfigurationsController, :type => :controller do
         it { is_expected.to respond_with(:success) }
 
         it 'returns the metric_configuration' do
+          expect(metric_configuration_params["id"]).to eq(nil)
           expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration.to_hash.to_json))
         end
       end
@@ -38,6 +39,7 @@ describe MetricConfigurationsController, :type => :controller do
         it { is_expected.to respond_with(:unprocessable_entity) }
 
         it 'returns metric_configuration' do
+          expect(metric_configuration_params["id"]).to eq(nil)
           expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration.to_hash.to_json))
         end
       end

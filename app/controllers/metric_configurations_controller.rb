@@ -3,7 +3,7 @@ class MetricConfigurationsController < ApplicationController
     params[:metric_configuration][:metric].delete(:code)
     metric_configuration = KalibroGem::Entities::MetricConfiguration.new(params[:metric_configuration])
     metric_configuration.configuration_id = params[:configuration_id]
-    metric_configuration.id = nil
+    metric_configuration.id = nil if metric_configuration.id == 0
 
     #Sending this garbage just because KalibroJava is waiting Prezento to send an aggregation form
     if metric_configuration.metric.compound == "true"
