@@ -56,6 +56,9 @@ GEM
     diff-lcs (1.2.5)
     docile (1.1.5)
     erubis (2.7.0)
+    exception_notification (4.0.1)
+      actionmailer (>= 3.0.4)
+      activesupport (>= 3.0.4)
     execjs (2.2.1)
     factory_girl (4.4.0)
       activesupport (>= 3.0.0)
@@ -215,6 +218,7 @@ DEPENDENCIES
   capistrano-rails
   capistrano-rvm (~> 0.1.0)
   coffee-rails (~> 4.0.0)
+  exception_notification (~> 4.0.1)
   factory_girl_rails (~> 4.4.1)
   faraday_middleware (~> 0.9.0)
   jbuilder (~> 2.0)

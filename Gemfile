@@ -36,6 +36,9 @@ gem 'spring', group: :development
 # Requests via HTTP
 gem "faraday_middleware", "~> 0.9.0"
 
+# Sends a email whenever there is a unexpected exception
+gem 'exception_notification', '~> 4.0.1'
+
 group :test do
   # Easier test writing
   gem "shoulda-matchers"
