@@ -91,7 +91,7 @@ describe ModuleResultsController, :type => :controller do
   describe 'history_of' do
     let!(:repository) { FactoryGirl.build(:repository) }
     let!(:module_result) { FactoryGirl.build(:module_result) }
-    let!(:date_module_results) { [FactoryGirl.build(:date_module_result, module_result: module_result)] }
+    let!(:date_module_results) { [[Date.today, module_result.to_hash]] }
 
     context 'returning results' do
       before :each do
@@ -107,7 +107,7 @@ describe ModuleResultsController, :type => :controller do
         it { is_expected.to respond_with(:success) }
 
         it 'returns the list of date_metric_results' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse({date_module_results: date_module_results.map{|c| c.to_hash}}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({date_module_results: date_module_results}.to_json))
         end
       end
     end

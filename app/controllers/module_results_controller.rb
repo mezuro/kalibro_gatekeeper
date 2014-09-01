@@ -31,6 +31,12 @@ class ModuleResultsController < ApplicationController
     repository_id = KalibroProcessor.request("module_results/#{params[:id]}/repository_id", {}, :get)['repository_id']
     date_module_results = {date_module_results: KalibroProcessor.request("repositories/#{repository_id}/module_result_history_of", {module_id: params[:id]})['module_result_history_of']}
 
+    date_module_results[:date_module_results].each do |date_module_result|
+      date_module_result.last.delete("created_at")
+      date_module_result.last.delete("updated_at")
+      date_module_result.last.delete("processing_id")
+    end
+
     respond_to do |format|
       format.json { render json: date_module_results }
     end
