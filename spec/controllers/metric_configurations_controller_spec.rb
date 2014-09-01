@@ -2,45 +2,72 @@ require 'rails_helper'
 
 describe MetricConfigurationsController, :type => :controller do
   describe 'save' do
-    let(:metric_configuration) { FactoryGirl.build(:metric_configuration, id: 0) }
-    let(:metric_configuration_params) { metric_configuration.to_hash }
+    context 'with a native metric' do
+      let(:metric_configuration) { FactoryGirl.build(:metric_configuration, id: 0) }
+      let(:metric_configuration_params) { metric_configuration.to_hash }
 
-    context 'successfully saved' do
-      before :each do
-        KalibroGem::Entities::MetricConfiguration.any_instance.expects(:save).returns(true)
-      end
-
-      context 'json format' do
+      context 'successfully saved' do
         before :each do
-          metric_configuration_params.delete(:attributes!)
-          post :save, metric_configuration: metric_configuration_params, format: :json
+          KalibroGem::Entities::MetricConfiguration.any_instance.expects(:save).returns(true)
         end
 
-        it { is_expected.to respond_with(:success) }
+        context 'json format' do
+          before :each do
+            metric_configuration_params.delete(:attributes!)
+            post :save, metric_configuration: metric_configuration_params, format: :json
+          end
 
-        it 'returns the metric_configuration' do
-          expect(metric_configuration_params["id"]).to eq(nil)
-          expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration.to_hash.to_json))
+          it { is_expected.to respond_with(:success) }
+
+          it 'returns the metric_configuration' do
+            expect(metric_configuration_params["id"]).to eq(nil)
+            expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration.to_hash.to_json))
+          end
+        end
+      end
+
+      context 'failed to save' do
+        before :each do
+          KalibroGem::Entities::MetricConfiguration.any_instance.expects(:save).returns(false)
+        end
+
+        context 'json format' do
+          before :each do
+            metric_configuration_params.delete(:attributes!)
+            post :save, metric_configuration: metric_configuration_params, format: :json
+          end
+
+          it { is_expected.to respond_with(:unprocessable_entity) }
+
+          it 'returns metric_configuration' do
+            expect(metric_configuration_params["id"]).to eq(nil)
+            expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration.to_hash.to_json))
+          end
         end
       end
     end
 
-    context 'failed to save' do
-      before :each do
-        KalibroGem::Entities::MetricConfiguration.any_instance.expects(:save).returns(false)
-      end
+    context 'with a compound metric' do
+      let(:metric_configuration) { FactoryGirl.build(:metric_configuration, id: 0, metric: FactoryGirl.build(:compound_metric)) }
+      let(:metric_configuration_params) { metric_configuration.to_hash }
 
-      context 'json format' do
+      context 'successfully saved' do
         before :each do
-          metric_configuration_params.delete(:attributes!)
-          post :save, metric_configuration: metric_configuration_params, format: :json
+          KalibroGem::Entities::MetricConfiguration.any_instance.expects(:save).returns(true)
         end
 
-        it { is_expected.to respond_with(:unprocessable_entity) }
+        context 'json format' do
+          before :each do
+            metric_configuration_params.delete(:attributes!)
+            post :save, metric_configuration: metric_configuration_params, format: :json
+          end
 
-        it 'returns metric_configuration' do
-          expect(metric_configuration_params["id"]).to eq(nil)
-          expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration.to_hash.to_json))
+          it { is_expected.to respond_with(:success) }
+
+          it 'returns the metric_configuration' do
+            expect(metric_configuration_params["id"]).to eq(nil)
+            expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration.to_hash.to_json))
+          end
         end
       end
     end

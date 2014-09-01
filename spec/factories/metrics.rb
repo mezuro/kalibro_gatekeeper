@@ -32,4 +32,13 @@ FactoryGirl.define do
     script ""
     language ["C", "CPP", "JAVA"]
   end
+
+  factory :compound_metric, class: KalibroGem::Entities::Metric do
+    name "My compound"
+    compound true
+    scope "CLASS"
+    description nil
+    script "return loc*2;"
+    language ["C", "CPP", "JAVA"]
+  end
 end
