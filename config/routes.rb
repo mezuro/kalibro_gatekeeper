@@ -2,8 +2,8 @@ Rails.application.routes.draw do
   root 'information#data'
 
   #BaseTools
-  get 'base_tools/all_names' => 'base_tools#all_names'
-  post 'base_tools/get' => 'base_tools#get'
+  get 'metric_collectors/all_names' => 'metric_collectors#all_names'
+  post 'metric_collectors/get' => 'metric_collectors#get'
 
   #Configurations
   post 'configurations/exists' => 'configurations#exists'

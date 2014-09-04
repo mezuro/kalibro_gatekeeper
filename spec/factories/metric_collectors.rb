@@ -15,17 +15,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 FactoryGirl.define do
-  factory :base_tool, class: KalibroGem::Entities::BaseTool do
+  factory :metric_collector, class: KalibroGem::Entities::BaseTool do
     name "Analizo"
     description "Analizo is a suite of source code analysis tools."
     collector_class_name "org.analizo.AnalizoMetricCollector"
     supported_metric { [FactoryGirl.build(:metric), FactoryGirl.build(:metric)] }
 
-    trait :another_base_tool do
+    trait :another_metric_collector do
       name "Avalio"
       description "Avalio is another source code analyser that hasn't been developed yet."
     end
 
-    factory  :another_base_tool, traits: [:another_base_tool]
+    factory  :another_metric_collector, traits: [:another_metric_collector]
   end
 end
