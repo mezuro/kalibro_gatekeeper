@@ -14,6 +14,7 @@ describe MetricConfigurationsController, :type => :controller do
         context 'json format' do
           before :each do
             metric_configuration_params.delete(:attributes!)
+            metric_configuration_params[:metric_collector_name] = metric_configuration_params.delete(:base_tool_name)
             post :save, metric_configuration: metric_configuration_params, format: :json
           end
 
@@ -34,6 +35,7 @@ describe MetricConfigurationsController, :type => :controller do
         context 'json format' do
           before :each do
             metric_configuration_params.delete(:attributes!)
+            metric_configuration_params[:metric_collector_name] = metric_configuration_params.delete(:base_tool_name)
             post :save, metric_configuration: metric_configuration_params, format: :json
           end
 
@@ -59,6 +61,7 @@ describe MetricConfigurationsController, :type => :controller do
         context 'json format' do
           before :each do
             metric_configuration_params.delete(:attributes!)
+            metric_configuration_params[:metric_collector_name] = metric_configuration_params.delete(:base_tool_name)
             post :save, metric_configuration: metric_configuration_params, format: :json
           end
 

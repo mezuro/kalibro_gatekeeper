@@ -1,6 +1,7 @@
 class MetricConfigurationsController < ApplicationController
   def save
     params[:metric_configuration][:metric].delete(:code)
+    params[:metric_configuration][:base_tool_name] = params[:metric_configuration].delete(:metric_collector_name)
     metric_configuration = KalibroGem::Entities::MetricConfiguration.new(params[:metric_configuration])
     metric_configuration.configuration_id = params[:configuration_id]
     metric_configuration.id = nil if metric_configuration.id == 0
@@ -9,6 +10,8 @@ class MetricConfigurationsController < ApplicationController
     if metric_configuration.metric.compound == "true"
       metric_configuration.aggregation_form = "AVERAGE"
     end
+
+    p metric_configuration
 
     respond_to do |format|
       if metric_configuration.save
