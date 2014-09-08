@@ -13,9 +13,7 @@ class MetricConfigurationsController < ApplicationController
 
     respond_to do |format|
       if metric_configuration.save
-        metric_configuration_hash = metric_configuration.to_hash
-        metric_configuration_hash[:metric_collector_name] = metric_configuration_hash.delete(:base_tool_name)
-        format.json { render json: metric_configuration_hash }
+        format.json { render json: set_metric_collector_name(metric_configuration.to_hash) }
       else
         format.json { render json: metric_configuration.to_hash, status: :unprocessable_entity }
       end
@@ -31,9 +29,7 @@ class MetricConfigurationsController < ApplicationController
 
     respond_to do |format|
       if metric_configuration.is_a?(KalibroGem::Entities::MetricConfiguration)
-        metric_configuration_hash = metric_configuration.to_hash
-        metric_configuration_hash[:metric_collector_name] = metric_configuration_hash.delete(:base_tool_name)
-        format.json { render json: metric_configuration_hash }
+        format.json { render json: set_metric_collector_name(metric_configuration.to_hash) }
       else
         format.json { render json: metric_configuration, status: :unprocessable_entity }
       end
@@ -50,9 +46,7 @@ class MetricConfigurationsController < ApplicationController
 
     respond_to do |format|
       if metric_configuration.is_a?(KalibroGem::Entities::MetricConfiguration)
-        metric_configuration_hash = metric_configuration.to_hash
-        metric_configuration_hash[:metric_collector_name] = metric_configuration_hash.delete(:base_tool_name)
-        format.json { render json: metric_configuration_hash }
+        format.json { render json: set_metric_collector_name(metric_configuration.to_hash) }
       else
         format.json { render json: metric_configuration, status: :unprocessable_entity }
       end
@@ -63,10 +57,17 @@ class MetricConfigurationsController < ApplicationController
     metric_configurations = {metric_configurations: KalibroGem::Entities::MetricConfiguration.metric_configurations_of(params[:configuration_id]).map { |metric_configuration| metric_configuration.to_hash }}
 
     respond_to do |format|
-      metric_configurations[:metric_configurations].each do |metric_configuration|
-        metric_configuration[:metric_collector_name] = metric_configuration.delete(:base_tool_name)
+      metric_configurations[:metric_configurations].map do |metric_configuration_hash|
+        set_metric_collector_name(metric_configuration_hash)
       end
       format.json { render json: metric_configurations }
     end
+  end
+
+  private
+
+  def set_metric_collector_name(metric_configuration_hash)
+    metric_configuration_hash[:metric_collector_name] = metric_configuration_hash.delete(:base_tool_name)
+    metric_configuration_hash
   end
 end
