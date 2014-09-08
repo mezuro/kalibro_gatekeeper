@@ -175,7 +175,9 @@ describe MetricConfigurationsController, :type => :controller do
       it { is_expected.to respond_with(:success) }
 
       it 'returns the list of names' do
-        expect(JSON.parse(response.body)).to eq(JSON.parse({metric_configurations: metric_configurations.map { |c| c.to_hash }}.to_json))
+        metric_configurations_hash = metric_configurations.map { |c| c.to_hash }
+        metric_configurations_hash.each { |c| c[:metric_collector_name] = c.delete(:base_tool_name)}
+        expect(JSON.parse(response.body)).to eq(JSON.parse({metric_configurations: metric_configurations_hash}.to_json))
       end
     end
   end
