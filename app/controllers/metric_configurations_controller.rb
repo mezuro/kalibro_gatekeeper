@@ -11,11 +11,11 @@ class MetricConfigurationsController < ApplicationController
       metric_configuration.aggregation_form = "AVERAGE"
     end
 
-    p metric_configuration
-
     respond_to do |format|
       if metric_configuration.save
-        format.json { render json: metric_configuration.to_hash }
+        metric_configuration_hash = metric_configuration.to_hash
+        metric_configuration_hash[:metric_collector_name] = metric_configuration_hash.delete(:base_tool_name)
+        format.json { render json: metric_configuration_hash }
       else
         format.json { render json: metric_configuration.to_hash, status: :unprocessable_entity }
       end
@@ -31,7 +31,9 @@ class MetricConfigurationsController < ApplicationController
 
     respond_to do |format|
       if metric_configuration.is_a?(KalibroGem::Entities::MetricConfiguration)
-        format.json { render json: metric_configuration.to_hash }
+        metric_configuration_hash = metric_configuration.to_hash
+        metric_configuration_hash[:metric_collector_name] = metric_configuration_hash.delete(:base_tool_name)
+        format.json { render json: metric_configuration_hash }
       else
         format.json { render json: metric_configuration, status: :unprocessable_entity }
       end
@@ -48,7 +50,9 @@ class MetricConfigurationsController < ApplicationController
 
     respond_to do |format|
       if metric_configuration.is_a?(KalibroGem::Entities::MetricConfiguration)
-        format.json { render json: metric_configuration.to_hash }
+        metric_configuration_hash = metric_configuration.to_hash
+        metric_configuration_hash[:metric_collector_name] = metric_configuration_hash.delete(:base_tool_name)
+        format.json { render json: metric_configuration_hash }
       else
         format.json { render json: metric_configuration, status: :unprocessable_entity }
       end

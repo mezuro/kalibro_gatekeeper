@@ -13,7 +13,6 @@ describe MetricConfigurationsController, :type => :controller do
 
         context 'json format' do
           before :each do
-            metric_configuration_params.delete(:attributes!)
             metric_configuration_params[:metric_collector_name] = metric_configuration_params.delete(:base_tool_name)
             post :save, metric_configuration: metric_configuration_params, format: :json
           end
@@ -22,7 +21,7 @@ describe MetricConfigurationsController, :type => :controller do
 
           it 'returns the metric_configuration' do
             expect(metric_configuration_params["id"]).to eq(nil)
-            expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration.to_hash.to_json))
+            expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration_params.to_json))
           end
         end
       end
@@ -34,7 +33,6 @@ describe MetricConfigurationsController, :type => :controller do
 
         context 'json format' do
           before :each do
-            metric_configuration_params.delete(:attributes!)
             metric_configuration_params[:metric_collector_name] = metric_configuration_params.delete(:base_tool_name)
             post :save, metric_configuration: metric_configuration_params, format: :json
           end
@@ -60,7 +58,6 @@ describe MetricConfigurationsController, :type => :controller do
 
         context 'json format' do
           before :each do
-            metric_configuration_params.delete(:attributes!)
             metric_configuration_params[:metric_collector_name] = metric_configuration_params.delete(:base_tool_name)
             post :save, metric_configuration: metric_configuration_params, format: :json
           end
@@ -69,7 +66,7 @@ describe MetricConfigurationsController, :type => :controller do
 
           it 'returns the metric_configuration' do
             expect(metric_configuration_params["id"]).to eq(nil)
-            expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration.to_hash.to_json))
+            expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration_params.to_json))
           end
         end
       end
@@ -92,7 +89,9 @@ describe MetricConfigurationsController, :type => :controller do
         it { is_expected.to respond_with(:success) }
 
         it 'returns metric_configuration' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration.to_hash.to_json))
+          expected = metric_configuration.to_hash
+          expected[:metric_collector_name] = expected.delete(:base_tool_name)
+          expect(JSON.parse(response.body)).to eq(JSON.parse(expected.to_json))
         end
       end
     end
@@ -134,7 +133,9 @@ describe MetricConfigurationsController, :type => :controller do
         it { is_expected.to respond_with(:success) }
 
         it 'returns metric_configuration' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse(metric_configuration.to_hash.to_json))
+          expected = metric_configuration.to_hash
+          expected[:metric_collector_name] = expected.delete(:base_tool_name)
+          expect(JSON.parse(response.body)).to eq(JSON.parse(expected.to_json))
         end
       end
     end
