@@ -13,11 +13,6 @@ class MetricCollectorsController < ApplicationController
 
     respond_to do |format|
       if metric_collector["error"].nil?
-        # The client expects the supported metrics inside a Array, without code and the key on singular
-        metric_collector["metric_collector"]["supported_metric"] = []
-        metric_collector["metric_collector"]["supported_metrics"].each {|code, metric| metric_collector["metric_collector"]["supported_metric"] << metric}
-        metric_collector["metric_collector"].delete("supported_metrics")
-
         format.json { render json: metric_collector["metric_collector"] }
       else
         format.json { render json: metric_collector, status: :unprocessable_entity }
