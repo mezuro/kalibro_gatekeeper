@@ -28,6 +28,7 @@ class MetricResultsController < ApplicationController
       metric_result.delete('updated_at')
       metric_result.delete('module_result_id')
       metric_result.delete('metric_configuration_id')
+      metric_result["configuration"][:metric_collector_name] = metric_result["configuration"].delete(:base_tool_name)
     end
 
     respond_to do |format|
@@ -50,6 +51,6 @@ class MetricResultsController < ApplicationController
     metric_result_hash["configuration"] = KalibroGem::Entities::MetricConfigurationSnapshot.
                                             new(range: range_snapshots, code: metric_configuration.code,
                                                 weight: metric_configuration.weight, aggregation_form: metric_configuration.aggregation_form,
-                                                metric: metric_configuration.metric, base_tool_name: metric_configuration.base_tool_name)
+                                                metric: metric_configuration.metric, base_tool_name: metric_configuration.base_tool_name).to_hash
   end
 end
