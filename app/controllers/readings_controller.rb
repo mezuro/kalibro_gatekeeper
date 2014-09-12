@@ -45,7 +45,11 @@ class ReadingsController < ApplicationController
   end
 
   def of
-    readings = {readings: KalibroGem::Entities::Reading.readings_of(params[:reading_group_id]).map { |reading| reading.to_hash }}
+    readings = {readings: KalibroGem::Entities::Reading.readings_of(params[:reading_group_id]).map do |reading|
+                    reading.group_id = params[:reading_group_id]
+                    reading.to_hash
+                  end
+                }
 
     respond_to do |format|
       format.json { render json: readings }
