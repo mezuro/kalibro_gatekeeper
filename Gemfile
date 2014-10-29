@@ -52,7 +52,7 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.1.0'
 
   # Fixtures made easy
-  gem 'factory_girl_rails', '~> 4.4.1'
+  gem 'factory_girl_rails', '~> 4.5.0'
 
   gem 'mocha', '~> 1.1.0'
 
