@@ -17,4 +17,5 @@
 
 config/database.yml
 config/kalibro_processor.yml
+config/kalibro_configuration.yml
 coverage
