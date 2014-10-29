@@ -3,7 +3,7 @@ require 'rails_helper'
 describe ConfigurationsController, :type => :controller do
   describe 'exists' do
     before :each do
-      KalibroGem::Entities::Configuration.expects(:exists?).with(42).returns(true)
+      KalibroConfiguration.expects(:request).with("kalibro_configurations/42/exists", {}, :get).returns(exists: true)
     end
 
     context 'json format' do
@@ -23,7 +23,7 @@ describe ConfigurationsController, :type => :controller do
     let!(:configurations) { [FactoryGirl.build(:configuration), FactoryGirl.build(:another_configuration)] }
 
     before :each do
-      KalibroGem::Entities::Configuration.expects(:all).returns(configurations)
+      KalibroConfiguration.expects(:request).with("kalibro_configurations", {}, :get).returns(kalibro_configurations: configurations)
     end
 
     context 'html format' do
@@ -47,12 +47,15 @@ describe ConfigurationsController, :type => :controller do
     end
   end
 
+=begin
   describe 'save' do
     let(:configuration) { FactoryGirl.build(:configuration, id: nil) }
 
     context 'successfully saved' do
       before :each do
-        KalibroGem::Entities::Configuration.any_instance.expects(:save).returns(true)
+        configuration_params = {}
+        configuration.to_hash.select { | k, v |  k != :id }.map { |k, v| configuration_params[k.to_s] = v }
+        KalibroConfiguration.expects(:request).with("kalibro_configurations", {kalibro_configuration: configuration_params}).returns(kalibro_configuration: configuration)
       end
 
       context 'json format' do
@@ -63,7 +66,7 @@ describe ConfigurationsController, :type => :controller do
         it { is_expected.to respond_with(:success) }
 
         it 'returns the configuration' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse(configuration.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({kalibro_configuration: configuration}.to_json))
         end
       end
     end
@@ -86,14 +89,13 @@ describe ConfigurationsController, :type => :controller do
       end
     end
   end
-
+=end
   describe 'get' do
     let(:configuration) { FactoryGirl.build(:configuration) }
 
-
     context 'with and existent configuration' do
       before :each do
-        KalibroGem::Entities::Configuration.expects(:find).with(configuration.id).returns(configuration)
+        KalibroConfiguration.expects(:request).with("kalibro_configurations/#{configuration.id}", {}, :get).returns(kalibro_configuration: configuration)
       end
 
       context 'json format' do
@@ -104,14 +106,14 @@ describe ConfigurationsController, :type => :controller do
         it { is_expected.to respond_with(:success) }
 
         it 'returns configuration' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse(configuration.to_hash.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({kalibro_configuration: configuration}.to_json))
         end
       end
     end
 
     context 'with and inexistent configuration' do
       before :each do
-        KalibroGem::Entities::Configuration.expects(:find).with(configuration.id).raises(KalibroGem::Errors::RecordNotFound)
+        KalibroConfiguration.expects(:request).with("kalibro_configurations/#{configuration.id}", {}, :get).returns(error: 'RecordNotFound')
       end
 
       context 'json format' do
@@ -134,37 +136,18 @@ describe ConfigurationsController, :type => :controller do
 
     context 'with and existent configuration' do
       before :each do
-        KalibroGem::Entities::Configuration.expects(:find).with(configuration.id).returns(configuration)
+        KalibroConfiguration.expects(:request).with("kalibro_configurations/#{configuration.id}", {}, :delete).returns({})
       end
 
       context 'json format' do
         before :each do
-          configuration.expects(:destroy).returns(true)
           post :destroy, id: configuration.id, format: :json
         end
 
         it { is_expected.to respond_with(:success) }
 
         it 'returns configuration' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse(configuration.to_hash.to_json))
-        end
-      end
-    end
-
-    context 'with and inexistent configuration' do
-      before :each do
-        KalibroGem::Entities::Configuration.expects(:find).with(configuration.id).raises(KalibroGem::Errors::RecordNotFound)
-      end
-
-      context 'json format' do
-        before :each do
-          post :destroy, id: configuration.id, format: :json
-        end
-
-        it { is_expected.to respond_with(:unprocessable_entity) }
-
-        it 'returns configuration' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse({error: 'RecordNotFound'}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse({}.to_json))
         end
       end
     end

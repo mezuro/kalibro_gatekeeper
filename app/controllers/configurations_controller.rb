@@ -1,6 +1,6 @@
 class ConfigurationsController < ApplicationController
   def exists
-    exists = { exists: KalibroGem::Entities::Configuration.exists?(params[:id]) }
+    exists = KalibroConfiguration.request("kalibro_configurations/#{params[:id]}/exists", {}, :get)
 
     respond_to do |format|
       format.json { render json: exists }
@@ -8,7 +8,7 @@ class ConfigurationsController < ApplicationController
   end
 
   def all
-    configurations = {configurations: KalibroGem::Entities::Configuration.all.map { |configuration| configuration.to_hash }}
+    configurations = { configurations: KalibroConfiguration.request("kalibro_configurations", {}, :get)[:kalibro_configurations] }
 
     respond_to do |format|
       format.html { render json: configurations }
@@ -17,27 +17,30 @@ class ConfigurationsController < ApplicationController
   end
 
   def save
-    configuration = KalibroGem::Entities::Configuration.new(params[:configuration])
+    if params[:configuration][:id].nil? || params[:configuration][:id].to_i == 0
+      params[:configuration].delete(:id)
+      response = KalibroConfiguration.request("kalibro_configurations", {kalibro_configuration: params[:configuration]})
+    else
+      path = "kalibro_configurations/#{params[:configuration][:id]}"
+      params[:configuration].delete(:id)
+      response = KalibroConfiguration.request(path, {kalibro_configuration: params[:configuration]}, :put)
+    end
 
     respond_to do |format|
-      if configuration.save
-        format.json { render json: configuration.to_hash }
+      if response[:kalibro_configuration][:errors].nil?
+        format.json { render json: response }
       else
-        format.json { render json: configuration.to_hash, status: :unprocessable_entity }
+        format.json { render json: response, status: :unprocessable_entity }
       end
     end
   end
 
   def get
-    begin
-      configuration = KalibroGem::Entities::Configuration.find(params[:id])
-    rescue KalibroGem::Errors::RecordNotFound
-      configuration = {error: 'RecordNotFound'}
-    end
+    configuration = KalibroConfiguration.request("kalibro_configurations/#{params[:id]}", {}, :get)
 
     respond_to do |format|
-      if configuration.is_a?(KalibroGem::Entities::Configuration)
-        format.json { render json: configuration.to_hash }
+      if configuration[:error].nil?
+        format.json { render json: configuration }
       else
         format.json { render json: configuration, status: :unprocessable_entity }
       end
@@ -45,19 +48,10 @@ class ConfigurationsController < ApplicationController
   end
 
   def destroy
-    begin
-      configuration = KalibroGem::Entities::Configuration.find(params[:id])
-      configuration.destroy
-    rescue KalibroGem::Errors::RecordNotFound
-      configuration = {error: 'RecordNotFound'}
-    end
+    KalibroConfiguration.request("kalibro_configurations/#{params[:id]}", {}, :delete)
 
     respond_to do |format|
-      if configuration.is_a?(KalibroGem::Entities::Configuration)
-        format.json { render json: configuration.to_hash }
-      else
-        format.json { render json: configuration, status: :unprocessable_entity }
-      end
+      format.json { render json: {}, status: :ok }
     end
   end
 end
