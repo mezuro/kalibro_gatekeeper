@@ -20,10 +20,10 @@ describe ConfigurationsController, :type => :controller do
   end
 
   describe 'all' do
-    let!(:configurations) { [FactoryGirl.build(:configuration), FactoryGirl.build(:another_configuration)] }
+    let!(:configurations) { [FactoryGirl.build(:configuration).to_hash, FactoryGirl.build(:another_configuration).to_hash] }
 
     before :each do
-      KalibroConfiguration.expects(:request).with("kalibro_configurations", {}, :get).returns(kalibro_configurations: configurations)
+      KalibroConfiguration.expects(:request).with("kalibro_configurations", {}, :get).returns("kalibro_configurations" => configurations)
     end
 
     context 'html format' do
@@ -47,49 +47,107 @@ describe ConfigurationsController, :type => :controller do
     end
   end
 
-=begin
   describe 'save' do
-    let(:configuration) { FactoryGirl.build(:configuration, id: nil) }
 
-    context 'successfully saved' do
-      before :each do
-        configuration_params = {}
-        configuration.to_hash.select { | k, v |  k != :id }.map { |k, v| configuration_params[k.to_s] = v }
-        KalibroConfiguration.expects(:request).with("kalibro_configurations", {kalibro_configuration: configuration_params}).returns(kalibro_configuration: configuration)
-      end
+    context 'when creating a new configuration' do
+      let(:configuration) { FactoryGirl.build(:configuration, id: nil) }
 
-      context 'json format' do
+      context 'successfully saved' do
         before :each do
-          post :save, configuration: configuration.to_hash, format: :json
+          configuration_params = {}
+          configuration.to_hash.select { | k, v |  k != :id }.map { |k, v| configuration_params[k.to_s] = v }
+          KalibroConfiguration.expects(:request).with("kalibro_configurations", {kalibro_configuration: configuration_params}).returns('kalibro_configuration' => configuration.to_hash)
         end
 
-        it { is_expected.to respond_with(:success) }
+        context 'json format' do
+          before :each do
+            post :save, configuration: configuration.to_hash, format: :json
+          end
 
-        it 'returns the configuration' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse({kalibro_configuration: configuration}.to_json))
+          it { is_expected.to respond_with(:success) }
+
+          it 'returns the configuration' do
+            expect(JSON.parse(response.body)).to eq(JSON.parse(configuration.to_json))
+          end
+        end
+      end
+
+      context 'failed to save' do
+        before :each do
+          configuration_params = {}
+          configuration.to_hash.select { | k, v |  k != :id }.map { |k, v| configuration_params[k.to_s] = v }
+          return_configuration_params = configuration_params.clone
+          return_configuration_params["errors"] = ["Error"]
+          KalibroConfiguration.expects(:request).with("kalibro_configurations", {kalibro_configuration: configuration_params}).returns('kalibro_configuration' => return_configuration_params)
+        end
+
+        context 'json format' do
+          before :each do
+            post :save, configuration: configuration.to_hash, format: :json
+          end
+
+          it { is_expected.to respond_with(:unprocessable_entity) }
+
+          it 'returns configuration' do
+            expected_return = JSON.parse(configuration.to_hash.to_json)
+            expected_return["kalibro_errors"] = ["Error"]
+            expected_return.delete("id")
+            expect(JSON.parse(response.body)).to eq(expected_return)
+          end
         end
       end
     end
 
-    context 'failed to save' do
-      before :each do
-        KalibroGem::Entities::Configuration.any_instance.expects(:save).returns(false)
-      end
+    context 'when updating a existing configuration' do
+      let(:configuration) { FactoryGirl.build(:configuration, id: 42) }
 
-      context 'json format' do
+      context 'successfully saved' do
         before :each do
-          post :save, configuration: configuration.to_hash, format: :json
+          configuration_params = {}
+          configuration.to_hash.select { | k, v |  k != :id }.map { |k, v| configuration_params[k.to_s] = v }
+          KalibroConfiguration.expects(:request).with("kalibro_configurations/#{configuration.id}", {kalibro_configuration: configuration_params}, :put).returns('kalibro_configuration' => configuration.to_hash)
         end
 
-        it { is_expected.to respond_with(:unprocessable_entity) }
+        context 'json format' do
+          before :each do
+            post :save, configuration: configuration.to_hash, format: :json
+          end
 
-        it 'returns configuration' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse(configuration.to_hash.to_json))
+          it { is_expected.to respond_with(:success) }
+
+          it 'returns the configuration' do
+            expect(JSON.parse(response.body)).to eq(JSON.parse(configuration.to_json))
+          end
+        end
+      end
+
+      context 'failed to save' do
+        before :each do
+          configuration_params = {}
+          configuration.to_hash.select { | k, v |  k != :id }.map { |k, v| configuration_params[k.to_s] = v }
+          return_configuration_params = configuration_params.clone
+          return_configuration_params["errors"] = ["Error"]
+          KalibroConfiguration.expects(:request).with("kalibro_configurations/#{configuration.id}", {kalibro_configuration: configuration_params}, :put).returns('kalibro_configuration' => return_configuration_params)
+        end
+
+        context 'json format' do
+          before :each do
+            post :save, configuration: configuration.to_hash, format: :json
+          end
+
+          it { is_expected.to respond_with(:unprocessable_entity) }
+
+          it 'returns configuration' do
+            expected_return = JSON.parse(configuration.to_hash.to_json)
+            expected_return["kalibro_errors"] = ["Error"]
+            expected_return.delete("id")
+            expect(JSON.parse(response.body)).to eq(expected_return)
+          end
         end
       end
     end
   end
-=end
+
   describe 'get' do
     let(:configuration) { FactoryGirl.build(:configuration) }
 
@@ -113,7 +171,7 @@ describe ConfigurationsController, :type => :controller do
 
     context 'with and inexistent configuration' do
       before :each do
-        KalibroConfiguration.expects(:request).with("kalibro_configurations/#{configuration.id}", {}, :get).returns(error: 'RecordNotFound')
+        KalibroConfiguration.expects(:request).with("kalibro_configurations/#{configuration.id}", {}, :get).returns("error" => 'RecordNotFound')
       end
 
       context 'json format' do

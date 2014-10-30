@@ -8,7 +8,9 @@ class ConfigurationsController < ApplicationController
   end
 
   def all
-    configurations = { configurations: KalibroConfiguration.request("kalibro_configurations", {}, :get)[:kalibro_configurations] }
+    configurations_hashes = KalibroConfiguration.request("kalibro_configurations", {}, :get)["kalibro_configurations"]
+    configurations_hashes.map { |configuration_hash| configuration_hash.delete("created_at"); configuration_hash.delete("updated_at") }
+    configurations = { configurations: configurations_hashes }
 
     respond_to do |format|
       format.html { render json: configurations }
@@ -26,11 +28,15 @@ class ConfigurationsController < ApplicationController
       response = KalibroConfiguration.request(path, {kalibro_configuration: params[:configuration]}, :put)
     end
 
+    response["kalibro_configuration"].delete("created_at")
+    response["kalibro_configuration"].delete("updated_at")
+
     respond_to do |format|
-      if response[:kalibro_configuration][:errors].nil?
-        format.json { render json: response }
+      if response["kalibro_configuration"]["errors"].nil?
+        format.json { render json: response["kalibro_configuration"] }
       else
-        format.json { render json: response, status: :unprocessable_entity }
+        response["kalibro_configuration"]["kalibro_errors"] = response["kalibro_configuration"].delete("errors")
+        format.json { render json: response["kalibro_configuration"], status: :unprocessable_entity }
       end
     end
   end
@@ -39,7 +45,7 @@ class ConfigurationsController < ApplicationController
     configuration = KalibroConfiguration.request("kalibro_configurations/#{params[:id]}", {}, :get)
 
     respond_to do |format|
-      if configuration[:error].nil?
+      if configuration['error'].nil?
         format.json { render json: configuration }
       else
         format.json { render json: configuration, status: :unprocessable_entity }
