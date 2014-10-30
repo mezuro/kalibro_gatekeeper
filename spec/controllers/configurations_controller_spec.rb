@@ -153,7 +153,7 @@ describe ConfigurationsController, :type => :controller do
 
     context 'with and existent configuration' do
       before :each do
-        KalibroConfiguration.expects(:request).with("kalibro_configurations/#{configuration.id}", {}, :get).returns(kalibro_configuration: configuration)
+        KalibroConfiguration.expects(:request).with("kalibro_configurations/#{configuration.id}", {}, :get).returns("kalibro_configuration" => configuration)
       end
 
       context 'json format' do
@@ -164,7 +164,7 @@ describe ConfigurationsController, :type => :controller do
         it { is_expected.to respond_with(:success) }
 
         it 'returns configuration' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse({kalibro_configuration: configuration}.to_json))
+          expect(JSON.parse(response.body)).to eq(JSON.parse(configuration.to_json))
         end
       end
     end

@@ -1,6 +1,6 @@
 class ReadingGroupsController < ApplicationController
   def exists
-    exists = { exists: KalibroGem::Entities::ReadingGroup.exists?(params[:id]) }
+    exists = KalibroConfiguration.request("reading_groups/#{params[:id]}/exists", {}, :get)
 
     respond_to do |format|
       format.json { render json: exists }
@@ -8,7 +8,9 @@ class ReadingGroupsController < ApplicationController
   end
 
   def all
-    reading_groups = {reading_groups: KalibroGem::Entities::ReadingGroup.all.map { |reading_group| reading_group.to_hash }}
+    reading_groups_hashes = KalibroConfiguration.request("reading_groups", {}, :get)["reading_groups"]
+    reading_groups_hashes.map { |reading_group_hash| reading_group_hash.delete("created_at"); reading_group_hash.delete("updated_at") }
+    reading_groups = { reading_groups: reading_groups_hashes }
 
     respond_to do |format|
       format.html { render json: reading_groups }
@@ -17,27 +19,34 @@ class ReadingGroupsController < ApplicationController
   end
 
   def save
-    reading_group = KalibroGem::Entities::ReadingGroup.new(params[:reading_group])
+    if params[:reading_group][:id].nil? || params[:reading_group][:id].to_i == 0
+      params[:reading_group].delete(:id)
+      response = KalibroConfiguration.request("reading_groups", {reading_group: params[:reading_group]})
+    else
+      path = "reading_groups/#{params[:reading_group][:id]}"
+      params[:reading_group].delete(:id)
+      response = KalibroConfiguration.request(path, {reading_group: params[:reading_group]}, :put)
+    end
+
+    response["reading_group"].delete("created_at")
+    response["reading_group"].delete("updated_at")
 
     respond_to do |format|
-      if reading_group.save
-        format.json { render json: reading_group.to_hash }
+      if response["reading_group"]["errors"].nil?
+        format.json { render json: response["reading_group"] }
       else
-        format.json { render json: reading_group.to_hash, status: :unprocessable_entity }
+        response["reading_group"]["kalibro_errors"] = response["reading_group"].delete("errors")
+        format.json { render json: response["reading_group"], status: :unprocessable_entity }
       end
     end
   end
 
   def get
-    begin
-      reading_group = KalibroGem::Entities::ReadingGroup.find(params[:id])
-    rescue KalibroGem::Errors::RecordNotFound
-      reading_group = {error: 'RecordNotFound'}
-    end
+    reading_group = KalibroConfiguration.request("reading_groups/#{params[:id]}", {}, :get)
 
     respond_to do |format|
-      if reading_group.is_a?(KalibroGem::Entities::ReadingGroup)
-        format.json { render json: reading_group.to_hash }
+      if reading_group['error'].nil?
+        format.json { render json: reading_group["reading_group"] }
       else
         format.json { render json: reading_group, status: :unprocessable_entity }
       end
@@ -45,19 +54,10 @@ class ReadingGroupsController < ApplicationController
   end
 
   def destroy
-    begin
-      reading_group = KalibroGem::Entities::ReadingGroup.find(params[:id])
-      reading_group.destroy
-    rescue KalibroGem::Errors::RecordNotFound
-      reading_group = {error: 'RecordNotFound'}
-    end
+    KalibroConfiguration.request("reading_groups/#{params[:id]}", {}, :delete)
 
     respond_to do |format|
-      if reading_group.is_a?(KalibroGem::Entities::ReadingGroup)
-        format.json { render json: reading_group.to_hash }
-      else
-        format.json { render json: reading_group, status: :unprocessable_entity }
-      end
+      format.json { render json: {}, status: :ok }
     end
   end
 end

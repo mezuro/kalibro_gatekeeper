@@ -46,7 +46,7 @@ class ConfigurationsController < ApplicationController
 
     respond_to do |format|
       if configuration['error'].nil?
-        format.json { render json: configuration }
+        format.json { render json: configuration["kalibro_configuration"] }
       else
         format.json { render json: configuration, status: :unprocessable_entity }
       end
