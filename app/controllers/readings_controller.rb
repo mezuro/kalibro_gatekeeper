@@ -10,9 +10,7 @@ class ReadingsController < ApplicationController
       response = KalibroConfiguration.request(path, {reading: params[:reading]}, :put)
     end
 
-    response["reading"].delete("created_at")
-    response["reading"].delete("updated_at")
-    response["reading"]["group_id"] = response["reading"].delete("reading_group_id")
+    conform_to_gatekeeper_client response["reading"]
 
     respond_to do |format|
       if response["reading"]["errors"].nil?
@@ -28,12 +26,9 @@ class ReadingsController < ApplicationController
     # The reading_group_id is not necessary and we do not know it either. So we just send 0
     reading = KalibroConfiguration.request("reading_groups/0/readings/#{params[:id]}", {}, :get)
 
-    reading["reading"].delete("created_at")
-    reading["reading"].delete("updated_at")
-    reading["reading"]["group_id"] = reading["reading"].delete("reading_group_id")
-
     respond_to do |format|
       if reading['error'].nil?
+        conform_to_gatekeeper_client reading["reading"]
         format.json { render json: reading["reading"] }
       else
         format.json { render json: reading, status: :unprocessable_entity }
@@ -51,14 +46,20 @@ class ReadingsController < ApplicationController
   end
 
   def of
-    readings = {readings: KalibroGem::Entities::Reading.readings_of(params[:reading_group_id]).map do |reading|
-                    reading.group_id = params[:reading_group_id]
-                    reading.to_hash
-                  end
-                }
-
+    readings =  KalibroConfiguration.request("reading_groups/#{params[:reading_group_id]}/readings", {}, :get)
+    readings["readings"].each do |reading|
+      conform_to_gatekeeper_client reading
+    end
     respond_to do |format|
       format.json { render json: readings }
     end
+  end
+
+  private
+
+  def conform_to_gatekeeper_client(reading_hash)
+    reading_hash.delete("created_at")
+    reading_hash.delete("updated_at")
+    reading_hash["group_id"] = reading_hash.delete("reading_group_id")
   end
 end
