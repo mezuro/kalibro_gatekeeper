@@ -2,77 +2,81 @@ require 'rails_helper'
 
 describe ReadingsController, :type => :controller do
   describe 'save' do
-    let(:reading) { FactoryGirl.build(:reading) }
-    let(:reading_params) { Hash[FactoryGirl.attributes_for(:reading, id: nil).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with symbols and integers }
-
-    context 'successfully saved' do
-      before :each do
-        reading_params.delete("id")
-        KalibroConfiguration.expects(:request).with("reading_groups/#{reading.group_id}/readings", {reading: reading_params}).returns({"reading" => reading_params})
-      end
-
-      context 'json format' do
-        before :each do
-          post :save, reading: reading_params, format: :json
-        end
-
-        it { is_expected.to respond_with(:success) }
-
-        it 'returns the reading' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse(reading_params.to_json))
-        end
-      end
-    end
-
-    context 'failed to save' do
-      let!(:returned_params) { reading_params.clone }
-      before :each do
-        reading_params.delete("id")
-        returned_params["errors"] = "Error"
-        KalibroConfiguration.expects(:request).with("reading_groups/#{reading.group_id}/readings", {reading: reading_params}).returns({"reading" => returned_params})
-      end
-
-      context 'json format' do
-        before :each do
-          post :save, reading: reading_params, format: :json
-        end
-
-        it { is_expected.to respond_with(:unprocessable_entity) }
-
-        it 'returns reading' do
-          expect(JSON.parse(response.body)).to eq(JSON.parse(returned_params.to_json))
-        end
-      end
-    end
-
-    context 'when updating an existing reading' do
-      pending 'Update readings' do
+    describe 'create' do
       let(:reading) { FactoryGirl.build(:reading) }
-      let(:reading_params) { Hash[FactoryGirl.attributes_for(:reading).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with symbols and integers }
+      let(:reading_params) { Hash[FactoryGirl.attributes_for(:reading, id: nil).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with symbols and integers }
 
-      context 'successfully updated' do
+      context 'successfully created' do
         before :each do
-          KalibroConfiguration.expects(:request).with("reading_groups/#{reading.group_id}/readings/#{reading.id}", {reading: reading_params}, :put).returns({"reading" => reading_params})
+          reading_params.delete("id")
+          KalibroConfiguration.expects(:request).with("reading_groups/#{reading.group_id}/readings", {reading: reading_params}).returns({"reading" => reading_params})
         end
 
         context 'json format' do
           before :each do
-            reading_hash = reading.to_hash
-            reading_hash.delete("kalibro_errors")
-            post :save, reading: reading_hash, format: :json
+            post :save, reading: reading_params, format: :json
           end
 
           it { is_expected.to respond_with(:success) }
 
           it 'returns the reading' do
-            expect(JSON.parse(response.body)).to eq(JSON.parse(reading.to_json))
+            expect(JSON.parse(response.body)).to eq(JSON.parse(reading_params.to_json))
           end
         end
       end
-      end
-    end
 
-    context 'when it fails to update' do
+      context 'failed to create' do
+        let!(:returned_params) { reading_params.clone }
+        before :each do
+          reading_params.delete("id")
+          returned_params["errors"] = "Error"
+          KalibroConfiguration.expects(:request).with("reading_groups/#{reading.group_id}/readings", {reading: reading_params}).returns({"reading" => returned_params})
+        end
+
+        context 'json format' do
+          before :each do
+            post :save, reading: reading_params, format: :json
+          end
+
+          it { is_expected.to respond_with(:unprocessable_entity) }
+
+          it 'returns reading' do
+            expect(JSON.parse(response.body)).to eq(JSON.parse(returned_params.to_json))
+          end
+        end
+      end
+
+      describe 'update' do
+        let(:reading) { FactoryGirl.build(:reading) }
+        let(:reading_params) { Hash[FactoryGirl.attributes_for(:reading).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with symbols and integers }
+
+        context 'when updating an existing reading' do
+          before :each do
+            reading_without_id = reading_params.clone
+            reading_without_id["reading_group_id"] = reading_without_id.delete("group_id")
+            KalibroConfiguration.expects(:request).with("reading_groups/#{reading.group_id}/readings/#{reading.id}", {reading: reading_without_id}, :put).returns({"reading" => reading_without_id})
+          end
+
+          context 'successfully updated' do
+            context 'json format' do
+              before :each do
+                put :save, reading: reading_params, format: :json
+              end
+
+              it { is_expected.to respond_with(:success) }
+
+              it 'returns the reading' do
+                reading.kalibro_errors = nil
+                expect(JSON.parse(response.body)).to eq(JSON.parse(reading.to_json))
+              end
+            end
+          end
+
+          context 'when it fails to update' do
+            pending
+          end
+        end
+      end
     end
   end
 

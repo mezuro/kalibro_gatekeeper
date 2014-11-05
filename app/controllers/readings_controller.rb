@@ -5,8 +5,7 @@ class ReadingsController < ApplicationController
       response = KalibroConfiguration.request("reading_groups/#{params[:reading][:group_id]}/readings", {reading: params[:reading]})
     else
       path = "reading_groups/#{params[:reading][:group_id]}/readings/#{params[:reading][:id]}"
-      params[:reading].delete(:id)
-      params[:reading_group_id] = params[:reading].delete(:group_id)
+      params[:reading][:reading_group_id] = params[:reading].delete(:group_id)
       response = KalibroConfiguration.request(path, {reading: params[:reading]}, :put)
     end
 
