@@ -45,35 +45,57 @@ describe ReadingsController, :type => :controller do
           end
         end
       end
+    end
 
-      describe 'update' do
-        let(:reading) { FactoryGirl.build(:reading) }
-        let(:reading_params) { Hash[FactoryGirl.attributes_for(:reading).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with symbols and integers }
+    describe 'update' do
+      let(:reading) { FactoryGirl.build(:reading) }
+      let(:reading_params) { Hash[FactoryGirl.attributes_for(:reading).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with symbols and integers }
 
-        context 'when updating an existing reading' do
+      context 'when updating an existing reading' do
+        context 'successfully updated' do
           before :each do
             reading_without_id = reading_params.clone
             reading_without_id["reading_group_id"] = reading_without_id.delete("group_id")
             KalibroConfiguration.expects(:request).with("reading_groups/#{reading.group_id}/readings/#{reading.id}", {reading: reading_without_id}, :put).returns({"reading" => reading_without_id})
           end
 
-          context 'successfully updated' do
-            context 'json format' do
-              before :each do
-                put :save, reading: reading_params, format: :json
-              end
+          context 'json format' do
+            before :each do
+              put :save, reading: reading_params, format: :json
+            end
 
-              it { is_expected.to respond_with(:success) }
+            it { is_expected.to respond_with(:success) }
 
-              it 'returns the reading' do
-                reading.kalibro_errors = nil
-                expect(JSON.parse(response.body)).to eq(JSON.parse(reading.to_json))
-              end
+            it 'returns the reading' do
+              reading.kalibro_errors = nil
+              expect(JSON.parse(response.body)).to eq(JSON.parse(reading.to_json))
             end
           end
+        end
 
-          context 'when it fails to update' do
-            pending
+        context 'and it fails to update' do
+          let!(:error) { {"grade" => ["Error"]} }
+          before :each do
+            reading_without_id = reading_params.clone
+            reading_without_id["reading_group_id"] = reading_without_id.delete("group_id")
+            returned_hash = reading_without_id.clone
+            returned_hash["errors"] = error
+            KalibroConfiguration.expects(:request).with("reading_groups/#{reading.group_id}/readings/#{reading.id}", {reading: reading_without_id}, :put).returns({"reading" => returned_hash})
+          end
+
+          context 'json format' do
+            before :each do
+              put :save, reading: reading_params, format: :json
+            end
+
+            it { is_expected.to respond_with(:unprocessable_entity) }
+
+            it 'returns the reading' do
+              error_hash = JSON.parse(reading.to_json)
+              error_hash["kalibro_errors"] = error
+
+              expect(JSON.parse(response.body)).to eq(error_hash)
+            end
           end
         end
       end
