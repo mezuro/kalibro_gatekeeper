@@ -1,21 +1,32 @@
 class MetricConfigurationsController < ApplicationController
   def save
-    params[:metric_configuration][:metric].delete(:code)
-    params[:metric_configuration][:base_tool_name] = params[:metric_configuration].delete(:metric_collector_name)
-    metric_configuration = KalibroGem::Entities::MetricConfiguration.new(params[:metric_configuration])
-    metric_configuration.configuration_id = params[:configuration_id]
-    metric_configuration.id = nil if metric_configuration.id == 0
+    if params[:metric_configuration][:metric][:compound] == "true"
+      params[:metric_configuration][:metric][:type] = "CompoundMetricSnapshot"
+    else
+      params[:metric_configuration][:metric][:type] = "NativeMetricSnapshot"
+    end
+    params[:metric_configuration][:metric].delete(:compound)
+    params[:metric_configuration][:metric][:metric_collector_name] = params[:metric_configuration].delete(:metric_collector_name)
+    params[:metric_configuration][:metric][:code] = params[:metric_configuration].delete(:code)
+    params[:metric_configuration][:metric].delete(:language)
 
-    #Sending this garbage just because KalibroJava is waiting Prezento to send an aggregation form
-    if metric_configuration.metric.compound == "true"
-      metric_configuration.aggregation_form = "AVERAGE"
+    params[:metric_configuration][:kalibro_configuration_id] = params[:configuration_id]
+    params[:metric_configuration].delete(:attributes!)
+
+    if params[:metric_configuration][:id].nil? || params[:metric_configuration][:id].to_i == 0
+      params[:metric_configuration].delete(:id)
+      response = KalibroConfiguration.request("metric_configurations/", {metric_configuration: params[:metric_configuration]})
+    else
+      path = "metric_configurations/#{params[:metric_configuration][:id]}"
+      params[:metric_configuration].delete(:id)
+      response = KalibroConfiguration.request(path, {reading: params[:reading]}, :put)
     end
 
     respond_to do |format|
       if metric_configuration.save
-        format.json { render json: set_metric_collector_name(metric_configuration.to_hash) }
+        format.json { render json: params[:metric_configuration] }
       else
-        format.json { render json: metric_configuration.to_hash, status: :unprocessable_entity }
+        format.json { render json: params[:metric_configuration], status: :unprocessable_entity }
       end
     end
   end
