@@ -22,25 +22,31 @@ class MetricConfigurationsController < ApplicationController
       response = KalibroConfiguration.request(path, {reading: params[:reading]}, :put)
     end
 
+    response["metric_configuration"].delete("created_at")
+    response["metric_configuration"].delete("updated_at")
+    response["metric_configuration"].delete("metric_snapshot_id")
+    response["metric_configuration"]["configuration_id"] = response["metric_configuration"].delete("kalibro_configuration_id")
+
     respond_to do |format|
-      if metric_configuration.save
-        format.json { render json: params[:metric_configuration] }
+      if response['errors'].nil?
+        format.json { render json: response["metric_configuration"] }
       else
-        format.json { render json: params[:metric_configuration], status: :unprocessable_entity }
+        format.json { render json: response["metric_configuration"], status: :unprocessable_entity }
       end
     end
   end
 
   def get
-    begin
-      metric_configuration = KalibroGem::Entities::MetricConfiguration.find(params[:id])
-    rescue KalibroGem::Errors::RecordNotFound
-      metric_configuration = {error: 'RecordNotFound'}
-    end
+    metric_configuration = KalibroConfiguration.request("metric_configurations/#{params[:id]}", {}, :get)
+
+    metric_configuration["metric_configuration"].delete("created_at")
+    metric_configuration["metric_configuration"].delete("updated_at")
+    metric_configuration["metric_configuration"].delete("metric_snapshot_id")
+    metric_configuration["metric_configuration"]["configuration_id"] = metric_configuration["metric_configuration"].delete("kalibro_configuration_id")
 
     respond_to do |format|
-      if metric_configuration.is_a?(KalibroGem::Entities::MetricConfiguration)
-        format.json { render json: set_metric_collector_name(metric_configuration.to_hash) }
+      if metric_configuration['error'].nil?
+        format.json { render json: metric_configuration["metric_configuration"] }
       else
         format.json { render json: metric_configuration, status: :unprocessable_entity }
       end

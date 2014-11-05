@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 describe MetricConfigurationsController, :type => :controller do
+  pending do
   describe 'save' do
     context 'with a native metric' do
       let(:metric_configuration) { FactoryGirl.build(:metric_configuration, id: 0) }
@@ -180,5 +181,6 @@ describe MetricConfigurationsController, :type => :controller do
         expect(JSON.parse(response.body)).to eq(JSON.parse({metric_configurations: metric_configurations_hash}.to_json))
       end
     end
+  end
   end
 end
