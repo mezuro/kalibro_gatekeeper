@@ -39,13 +39,12 @@ class MetricConfigurationsController < ApplicationController
   def get
     metric_configuration = KalibroConfiguration.request("metric_configurations/#{params[:id]}", {}, :get)
 
-    metric_configuration["metric_configuration"].delete("created_at")
-    metric_configuration["metric_configuration"].delete("updated_at")
-    metric_configuration["metric_configuration"].delete("metric_snapshot_id")
-    metric_configuration["metric_configuration"]["configuration_id"] = metric_configuration["metric_configuration"].delete("kalibro_configuration_id")
-
     respond_to do |format|
       if metric_configuration['error'].nil?
+        metric_configuration["metric_configuration"].delete("created_at")
+        metric_configuration["metric_configuration"].delete("updated_at")
+        metric_configuration["metric_configuration"].delete("metric_snapshot_id")
+        metric_configuration["metric_configuration"]["configuration_id"] = metric_configuration["metric_configuration"].delete("kalibro_configuration_id")
         format.json { render json: metric_configuration["metric_configuration"] }
       else
         format.json { render json: metric_configuration, status: :unprocessable_entity }
@@ -54,30 +53,17 @@ class MetricConfigurationsController < ApplicationController
   end
 
   def destroy
-    begin
-      metric_configuration = KalibroGem::Entities::MetricConfiguration.find(params[:id])
-      metric_configuration.destroy
-    rescue KalibroGem::Errors::RecordNotFound
-      metric_configuration = {error: 'RecordNotFound'}
-    end
-
+    KalibroConfiguration.request("metric_configurations/#{params[:id]}", {}, :delete)
     respond_to do |format|
-      if metric_configuration.is_a?(KalibroGem::Entities::MetricConfiguration)
-        format.json { render json: set_metric_collector_name(metric_configuration.to_hash) }
-      else
-        format.json { render json: metric_configuration, status: :unprocessable_entity }
-      end
+      format.json { render json: {}, status: :ok }
     end
   end
 
   def of
-    metric_configurations = {metric_configurations: KalibroGem::Entities::MetricConfiguration.metric_configurations_of(params[:configuration_id]).map { |metric_configuration| metric_configuration.to_hash }}
+    metric_configurations = KalibroConfiguration.request("kalibro_configurations/#{params[:configuration_id]}/metric_configurations", {}, :get)
 
     respond_to do |format|
-      metric_configurations[:metric_configurations].map do |metric_configuration_hash|
-        set_metric_collector_name(metric_configuration_hash)
-      end
-      format.json { render json: metric_configurations }
+      format.json { render json: metric_configurations, status: :ok }
     end
   end
 
