@@ -20,7 +20,7 @@ FactoryGirl.define do
     code 'code'
     metric {FactoryGirl.build(:metric)}
     base_tool_name "Analizo"
-    weight 1
+    weight 1.0
     aggregation_form "AVERAGE"
     reading_group_id 1
     configuration_id 1
