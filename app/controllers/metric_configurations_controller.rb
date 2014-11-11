@@ -1,25 +1,25 @@
 class MetricConfigurationsController < ApplicationController
   def save
-    if params[:metric_configuration][:metric][:compound] == "true"
-      params[:metric_configuration][:metric][:type] = "CompoundMetricSnapshot"
+    if params["metric_configuration"]["metric"]["compound"] == "true"
+      params["metric_configuration"]["metric"]["type"] = "CompoundMetricSnapshot"
     else
-      params[:metric_configuration][:metric][:type] = "NativeMetricSnapshot"
+      params["metric_configuration"]["metric"]["type"] = "NativeMetricSnapshot"
     end
-    params[:metric_configuration][:metric].delete(:compound)
-    params[:metric_configuration][:metric][:metric_collector_name] = params[:metric_configuration].delete(:metric_collector_name)
-    params[:metric_configuration][:metric][:code] = params[:metric_configuration].delete(:code)
-    params[:metric_configuration][:metric].delete(:language)
+    params["metric_configuration"]["metric"].delete("compound")
+    params["metric_configuration"]["metric"]["metric_collector_name"] = params["metric_configuration"].delete("metric_collector_name")
+    params["metric_configuration"]["metric"]["code"] = params["metric_configuration"].delete("code")
+    params["metric_configuration"]["metric"].delete("language")
 
-    params[:metric_configuration][:kalibro_configuration_id] = params[:configuration_id]
-    params[:metric_configuration].delete(:attributes!)
+    params["metric_configuration"]["kalibro_configuration_id"] = params["configuration_id"]
+    params["metric_configuration"].delete("attributes!")
 
-    if params[:metric_configuration][:id].nil? || params[:metric_configuration][:id].to_i == 0
-      params[:metric_configuration].delete(:id)
-      response = KalibroConfiguration.request("metric_configurations/", {metric_configuration: params[:metric_configuration]})
+    if params["metric_configuration"]["id"].nil? || params["metric_configuration"]["id"].to_i == 0
+      params["metric_configuration"].delete("id")
+      response = KalibroConfiguration.request("metric_configurations/", {metric_configuration: params["metric_configuration"]})
     else
-      path = "metric_configurations/#{params[:metric_configuration][:id]}"
-      params[:metric_configuration].delete(:id)
-      response = KalibroConfiguration.request(path, {reading: params[:reading]}, :put)
+      path = "metric_configurations/#{params["metric_configuration"]["id"]}"
+      params["metric_configuration"].delete("id")
+      response = KalibroConfiguration.request(path, {reading: params["reading"]}, :put)
     end
 
     response["metric_configuration"].delete("created_at")
@@ -65,12 +65,5 @@ class MetricConfigurationsController < ApplicationController
     respond_to do |format|
       format.json { render json: metric_configurations, status: :ok }
     end
-  end
-
-  private
-
-  def set_metric_collector_name(metric_configuration_hash)
-    metric_configuration_hash[:metric_collector_name] = metric_configuration_hash.delete(:base_tool_name)
-    metric_configuration_hash
   end
 end

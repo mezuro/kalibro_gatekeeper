@@ -5,7 +5,8 @@ describe MetricConfigurationsController, :type => :controller do
     pending do
       context 'create with a native metric' do
         let(:metric_configuration) { FactoryGirl.build(:metric_configuration) }
-        let(:metric_configuration_params) { Hash[FactoryGirl.attributes_for(:metric_configuration, metric: Hash[FactoryGirl.attributes_for(:metric).map { |k,v| [k.to_s, v.to_s]}]).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with symbols and integers
+        let(:metric_params) { Hash[FactoryGirl.attributes_for(:metric).map { |k,v| [k.to_s, v.to_s]}] }
+        let(:metric_configuration_params) { Hash[FactoryGirl.attributes_for(:metric_configuration, metric: metric_params).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with symbols and integers
         let(:metric_configuration_hash) { metric_configuration.to_hash }
 
         context 'successfully saved' do
